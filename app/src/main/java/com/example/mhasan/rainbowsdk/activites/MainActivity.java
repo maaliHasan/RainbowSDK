@@ -17,10 +17,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.TextView;
 
 import com.ale.infra.contact.Contact;
+import com.ale.infra.contact.DirectoryContact;
+import com.ale.infra.contact.IContactSearchListener;
 import com.ale.infra.list.ArrayItemList;
 import com.ale.infra.proxy.conversation.IRainbowConversation;
 import com.ale.listener.SigninResponseListener;
@@ -30,9 +31,7 @@ import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.adapters.CategoriesAdApter;
 
 import java.util.ArrayList;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-
+import java.util.List;
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     private ArrayItemList<IRainbowConversation> mConversations;
@@ -58,19 +57,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+         connectToRainbow();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mCategoriesAdapter = new CategoriesAdApter(getSupportFragmentManager());
+        mCategoriesAdapter = new CategoriesAdApter(this,getSupportFragmentManager());
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mCategoriesAdapter);
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(0);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.getTabAt(0).setText(R.string.contacts);
-        tabLayout.getTabAt(1).setText(R.string.rainbow_contact);
         tabLayout.setTabTextColors(ColorStateList.valueOf((getResources().getColor(R.color.colorPrimary))));
         tabLayout.addOnTabSelectedListener(
                 new TabLayout.ViewPagerOnTabSelectedListener(mViewPager){
@@ -81,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-
-
 
     }
 
@@ -96,9 +91,29 @@ public class MainActivity extends AppCompatActivity {
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo( searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener(){
+            //CharSequence inputText =  searchView.getQuery();
             @Override
             public void onFocusChange(View view, boolean b) {
+               // searchView.setBackgroundColor(Color.WHITE);
 
+                RainbowSdk.instance().contacts().searchByName("test", new IContactSearchListener() {
+                    @Override
+                    public void searchStarted() {
+                    }
+
+                    @Override
+                    public void searchFinished(List<DirectoryContact> list) {
+                        Log.d(TAG, "searchFinished: ");
+
+                       DirectoryContact contact= list.get(0);
+                    }
+
+                    @Override
+                    public void searchError() {
+                        Log.d(TAG, "searchError: ");
+
+                    }
+                });
 
             }
         });
@@ -156,13 +171,13 @@ public class MainActivity extends AppCompatActivity {
         RainbowSdk.instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                RainbowSdk.instance().connection().signin("mhasan@asaltech.com", "Password_123", "sandbox.openrainbow.com", new SigninResponseListener() {
+                RainbowSdk.instance().connection().signin("mhasan@asaltech.com","Password_123","sandbox.openrainbow.com", new SigninResponseListener(){
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected
                         // Do something on the thread UI
                         Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
-                        getContacts();
+
                     }
 
                     @Override
@@ -179,11 +194,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    public void getContacts() {
-        mArrayItemList = RainbowSdk.instance().contacts().getRainbowContacts();
-        mContactList = (ArrayList<Contact>) mArrayItemList.getItems();
     }
 
 }

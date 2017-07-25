@@ -15,8 +15,11 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.google.android.gms.internal.zzs.TAG;
+
 /**
  * Created by mhasan on 7/20/2017.
+ *
  */
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder> {
@@ -65,5 +68,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
             fullName = itemView.findViewById(R.id.fullName);
             profilePic = itemView.findViewById(R.id.profile_pic);
         }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 }

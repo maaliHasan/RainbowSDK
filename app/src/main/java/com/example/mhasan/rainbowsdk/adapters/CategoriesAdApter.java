@@ -1,9 +1,9 @@
 package com.example.mhasan.rainbowsdk.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentManager;
-
 import com.example.mhasan.rainbowsdk.fragments.ContactsFragment;
 import com.example.mhasan.rainbowsdk.fragments.RainbowContactsFragment;
 
@@ -13,9 +13,10 @@ import com.example.mhasan.rainbowsdk.fragments.RainbowContactsFragment;
  */
 
 public class CategoriesAdApter extends FragmentPagerAdapter {
-
-    public CategoriesAdApter(FragmentManager fm) {
+    private Context mContex;
+    public CategoriesAdApter(Context context,FragmentManager fm) {
         super(fm);
+        mContex=context;
 
     }
 
@@ -24,7 +25,7 @@ public class CategoriesAdApter extends FragmentPagerAdapter {
       switch (position){
           case 0:
               return new ContactsFragment();
-          case 1 :
+          case 1:
               return new RainbowContactsFragment();
       }
         return null;
@@ -33,5 +34,17 @@ public class CategoriesAdApter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return 2;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Contacts" ;
+            case 1:
+                return "All";
+
+        }
+        return null;
     }
 }
