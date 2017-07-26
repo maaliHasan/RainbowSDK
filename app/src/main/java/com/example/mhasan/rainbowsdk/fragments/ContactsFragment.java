@@ -1,39 +1,22 @@
 package com.example.mhasan.rainbowsdk.fragments;
 
 import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.content.Context;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.ale.infra.contact.Contact;
-import com.ale.infra.contact.DirectoryContact;
-import com.ale.infra.contact.IContactSearchListener;
 import com.ale.infra.list.ArrayItemList;
 import com.ale.infra.list.IItemListChangeListener;
-import com.ale.listener.SigninResponseListener;
-import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import static android.R.id.list;
-import static org.jivesoftware.smack.packet.IQ.Type.get;
 
 /**
  * Created by mhasan on 7/20/2017.
@@ -78,7 +61,6 @@ public class ContactsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadDialog();
-
         RainbowSdk.instance().contacts().getRainbowContacts().registerChangeListener(m_changeListener);
         mContactRV = getActivity().findViewById(R.id.contactList);
         mContactAD = new ContactsAdapter(getActivity(), mContactList);

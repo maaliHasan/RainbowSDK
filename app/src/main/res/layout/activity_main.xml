@@ -7,7 +7,9 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.example.mhasan.rainbowsdk.activites.MainActivity">
+
     <RelativeLayout
+        android:id="@+id/viewPagerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -15,18 +17,26 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true" />
+
         <android.support.v4.view.ViewPager
             android:id="@+id/container"
-            android:layout_below="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            android:layout_below="@+id/tabs"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/fragmentsContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title"
+        android:visibility="gone">
+    </RelativeLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

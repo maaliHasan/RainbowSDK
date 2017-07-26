@@ -2,36 +2,34 @@ package com.example.mhasan.rainbowsdk.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.ale.infra.contact.Contact;
+import com.ale.infra.contact.DirectoryContact;
 import com.example.mhasan.rainbowsdk.R;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.google.android.gms.internal.zzs.TAG;
+import static com.example.mhasan.rainbowsdk.R.id.contactList;
 
 /**
  * Created by mhasan on 7/20/2017.
  *
  */
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder> {
-    ArrayList<Contact> contactList;
+public class DirectoryContactsAdapter extends RecyclerView.Adapter<DirectoryContactsAdapter.dataHolder> {
+    ArrayList<DirectoryContact> mContactList;
     private LayoutInflater inflater;
     private Context mContext;
 
-    public ContactsAdapter(Context context, ArrayList<Contact> contactList) {
+    public DirectoryContactsAdapter(Context context, ArrayList<DirectoryContact>  contactList) {
         this.mContext = context;
         inflater = LayoutInflater.from(mContext);
-        this.contactList = contactList;
+        this.mContactList = contactList;
     }
 
 
@@ -43,7 +41,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
 
     @Override
     public void onBindViewHolder(dataHolder holder, int position) {
-        Contact currentContact = contactList.get(position);
+        DirectoryContact currentContact = mContactList.get(position);
         String fullName = currentContact.getFirstName() + " " + currentContact.getLastName();
         holder.fullName.setText(fullName);
         if ((currentContact.getPhoto())!=null) {
@@ -61,19 +59,21 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
 
     @Override
     public int getItemCount() {
-        return contactList.size();
+        return mContactList.size();
     }
 
     class dataHolder extends RecyclerView.ViewHolder {
         TextView fullName;
         CircleImageView profilePic;
         ImageView userIcon;
+        TextView noResult;
 
         public dataHolder(View itemView) {
             super(itemView);
             fullName = itemView.findViewById(R.id.fullName);
             profilePic = itemView.findViewById(R.id.profile_pic);
             userIcon=itemView.findViewById(R.id.contactIcon);
+            noResult=itemView.findViewById(R.id.noResult);
         }
     }
 

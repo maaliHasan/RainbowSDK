@@ -42,7 +42,7 @@ public class CategoriesAdApter extends FragmentPagerAdapter {
             case 0:
                 return "Contacts" ;
             case 1:
-                return "All";
+                return "Conversation";
 
         }
         return null;

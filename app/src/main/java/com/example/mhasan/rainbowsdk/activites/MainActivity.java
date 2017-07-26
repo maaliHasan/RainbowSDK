@@ -1,5 +1,7 @@
 package com.example.mhasan.rainbowsdk.activites;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -13,30 +15,30 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.DirectoryContact;
 import com.ale.infra.contact.IContactSearchListener;
-import com.ale.infra.list.ArrayItemList;
-import com.ale.infra.proxy.conversation.IRainbowConversation;
 import com.ale.listener.SigninResponseListener;
 import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.adapters.CategoriesAdApter;
+import com.example.mhasan.rainbowsdk.fragments.DirectoryContactsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
-    private ArrayItemList<IRainbowConversation> mConversations;
-    private ArrayItemList mArrayItemList;
-    public  ArrayList<Contact> mContactList;
+    private RelativeLayout mRelativeLayout;
+    private RelativeLayout mFragmentsContent;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -57,27 +59,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         connectToRainbow();
+        connectToRainbow();
+
+        mRelativeLayout = (RelativeLayout) findViewById(R.id.viewPagerLayout);
+        mFragmentsContent = (RelativeLayout) findViewById(R.id.fragmentsContent);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mCategoriesAdapter = new CategoriesAdApter(this,getSupportFragmentManager());
+        mCategoriesAdapter = new CategoriesAdApter(this, getSupportFragmentManager());
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mCategoriesAdapter);
         mViewPager.setCurrentItem(0);
-
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setTabTextColors(ColorStateList.valueOf((getResources().getColor(R.color.colorPrimary))));
         tabLayout.addOnTabSelectedListener(
-                new TabLayout.ViewPagerOnTabSelectedListener(mViewPager){
+                new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         super.onTabSelected(tab);
-                        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(),R.color.colorPrimary));
+                        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary));
                     }
                 }
         );
+
 
     }
 
@@ -89,32 +94,43 @@ public class MainActivity extends AppCompatActivity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo( searchManager.getSearchableInfo(getComponentName()));
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener(){
-            //CharSequence inputText =  searchView.getQuery();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
-               // searchView.setBackgroundColor(Color.WHITE);
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-                RainbowSdk.instance().contacts().searchByName("test", new IContactSearchListener() {
-                    @Override
-                    public void searchStarted() {
-                    }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                RainbowSdk.instance().contacts().searchByJid("b4026adf6515458db4aa75319a303432@openrainbow.com", new IContactSearchListener() {
+//                    @Override
+//                    public void searchStarted() {
+//                    }
+//
+//                    @Override
+//                    public void searchFinished(List<DirectoryContact> list) {
+//                        Log.d(TAG, "searchFinished: ");
+//                        DirectoryContact contact= list.get(0);
+//                    }
+//
+//                    @Override
+//                    public void searchError() {
+//                        Log.d(TAG, "searchError: ");
+//
+//                    }
+//                });
+                mRelativeLayout.setVisibility(View.GONE);
+                mFragmentsContent.setVisibility(View.VISIBLE);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                DirectoryContactsFragment DContactFatagment = new DirectoryContactsFragment();
+                fragmentTransaction.add(R.id.fragmentsContent, DContactFatagment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
 
-                    @Override
-                    public void searchFinished(List<DirectoryContact> list) {
-                        Log.d(TAG, "searchFinished: ");
 
-                       DirectoryContact contact= list.get(0);
-                    }
-
-                    @Override
-                    public void searchError() {
-                        Log.d(TAG, "searchError: ");
-
-                    }
-                });
-
+                return false;
             }
         });
         return true;
@@ -171,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         RainbowSdk.instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                RainbowSdk.instance().connection().signin("mhasan@asaltech.com","Password_123","sandbox.openrainbow.com", new SigninResponseListener(){
+                RainbowSdk.instance().connection().signin("mhasan@asaltech.com", "Asal@123", new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected
@@ -195,5 +211,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        int fragmentsCount = getSupportFragmentManager().getBackStackEntryCount();
+        if (fragmentsCount > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 
 }

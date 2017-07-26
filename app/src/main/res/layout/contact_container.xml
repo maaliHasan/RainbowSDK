@@ -46,9 +46,9 @@
             android:layout_toStartOf="@+id/fullName" />
 
         <ImageView
+            android:id="@+id/contactIcon"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:background="@drawable/ic_user_info"
             android:layout_alignTop="@+id/fullName"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
