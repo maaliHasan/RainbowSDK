@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ale.infra.contact.Contact;
+import com.ale.infra.contact.RainbowPresence;
 import com.example.mhasan.rainbowsdk.R;
 
 import java.util.ArrayList;
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.google.android.gms.internal.zzs.TAG;
+import static com.neovisionaries.i18n.LanguageCode.co;
 
 /**
  * Created by mhasan on 7/20/2017.
- *
  */
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder> {
@@ -32,6 +33,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
         this.mContext = context;
         inflater = LayoutInflater.from(mContext);
         this.contactList = contactList;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClicked(int position);
+    }
+
+    private OnItemClickListener mListener;
+
+    public void setOnItemClickedListener(OnItemClickListener listener) {
+        this.mListener = listener;
     }
 
 
@@ -46,14 +57,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
         Contact currentContact = contactList.get(position);
         String fullName = currentContact.getFirstName() + " " + currentContact.getLastName();
         holder.fullName.setText(fullName);
-        if ((currentContact.getPhoto())!=null) {
+        if ((currentContact.getPhoto()) != null) {
             holder.profilePic.setImageBitmap(currentContact.getPhoto());
-        }else {
+        } else {
             holder.profilePic.setImageResource(R.drawable.ic_placeholder);
         }
-        if(currentContact.isRoster()){
+        if (currentContact.isRoster()) {
             holder.userIcon.setImageResource(R.drawable.ic_user_info);
-        }else {
+        } else {
             holder.userIcon.setImageResource(R.drawable.ic_add_user);
         }
     }
@@ -64,7 +75,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
         return contactList.size();
     }
 
-    class dataHolder extends RecyclerView.ViewHolder {
+    class dataHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView fullName;
         CircleImageView profilePic;
         ImageView userIcon;
@@ -73,7 +84,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
             super(itemView);
             fullName = itemView.findViewById(R.id.fullName);
             profilePic = itemView.findViewById(R.id.profile_pic);
-            userIcon=itemView.findViewById(R.id.contactIcon);
+            userIcon = itemView.findViewById(R.id.contactIcon);
+            userIcon.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mListener.onItemClicked(getAdapterPosition());
+
         }
     }
 

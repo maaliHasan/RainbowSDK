@@ -4,11 +4,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-<solid android:color="#FFFFFF" />
+<solid android:color="#EEEEEE" />
 
 <stroke
     android:width="2dp"
-    android:color="#EEEEEE" />
+    android:color="#FFFFFF" />
 
     <size
         android:height="60dp"

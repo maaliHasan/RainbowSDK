@@ -31,26 +31,20 @@
             android:hint="full name "
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
+
         <TextView
-            android:id="@+id/company"
+            android:id="@+id/jobTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/fullName"
-            android:hint="Rainbow"/>
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/company"
             android:hint="Job title"/>
         <TextView
             android:id="@+id/presence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/title"
+            android:layout_below="@+id/jobTitle"
             android:hint="presence"/>
 
         <TextView
@@ -70,8 +64,10 @@
         android:layout_width="match_parent"
         android:layout_height="600dp"
         android:layout_below="@+id/contactDetails"
+        android:visibility="gone"
         >
 
     </android.support.v7.widget.RecyclerView>
+
 
 </RelativeLayout>
