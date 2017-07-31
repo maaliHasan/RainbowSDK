@@ -37,7 +37,7 @@
 
 
         <ImageView
-            android:id="@+id/contactIcon"
+            android:id="@+id/phoneEmailIcon"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_alignTop="@+id/fullName"

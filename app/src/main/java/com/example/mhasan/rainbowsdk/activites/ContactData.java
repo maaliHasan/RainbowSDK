@@ -24,24 +24,23 @@ public class ContactData implements Parcelable {
     public String fullName;
     public Bitmap profilePic;
     public String presence;
-    public Set<EmailAddress> emailAddresses = new HashSet<>();
+    public ArrayList<String> emailAddresses = new ArrayList<>();
     public Set<PhoneNumber> phoneNumbers = new HashSet< >();
 
-    public ContactData(String jobTitle, String fullName, Bitmap profilePic, String presence, Set<EmailAddress> emailAddresses, Set<PhoneNumber> phoneNumbers) {
+    public ContactData( String fullName,String jobTitle, Bitmap profilePic, String presence, ArrayList<String> emailAddresses) {
         this.jobTitle = jobTitle;
         this.fullName = fullName;
         this.profilePic = profilePic;
         this.presence = presence;
         this.emailAddresses = emailAddresses;
-        this.phoneNumbers = phoneNumbers;
     }
-
 
     protected ContactData(Parcel in) {
         jobTitle = in.readString();
         fullName = in.readString();
         profilePic = in.readParcelable(Bitmap.class.getClassLoader());
         presence = in.readString();
+        emailAddresses = in.createStringArrayList();
     }
 
     public static final Creator<ContactData> CREATOR = new Creator<ContactData>() {
@@ -67,5 +66,6 @@ public class ContactData implements Parcelable {
         parcel.writeString(fullName);
         parcel.writeParcelable(profilePic, i);
         parcel.writeString(presence);
+        parcel.writeStringList(emailAddresses);
     }
 }
