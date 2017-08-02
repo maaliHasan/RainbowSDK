@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
     <color name="common_google_signin_btn_text_dark_disabled">#E0E0E0</color>
+    <color name="red">#DD2C00</color>
 </resources>

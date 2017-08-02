@@ -13,24 +13,21 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.GridLayout.LayoutParams;
-
+import android.widget.Toast;
+import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
+import com.ale.listener.IRainbowSentInvitationListener;
+import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
-
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static com.example.mhasan.rainbowsdk.R.id.linearLayout;
-
 
 /**
  * Created by mhasan on 7/30/2017.
  *
  */
 
-public class ContactDetails extends AppCompatActivity {
+public class ContactDetails extends AppCompatActivity  implements View.OnClickListener{
     ContactData mContact;
-
+    public static final String TAG= ContactDetails.class.getSimpleName();
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +45,7 @@ public class ContactDetails extends AppCompatActivity {
 
         Bundle data = getIntent().getExtras();
         mContact = (ContactData) data.getParcelable("ContactData");
-       boolean isRoster=Boolean.valueOf(mContact.isRoster);
+        boolean isRoster = Boolean.valueOf(mContact.isRoster);
 
         fullName.setText(mContact.fullName);
         jobTitle.setText(mContact.jobTitle);
@@ -63,6 +60,61 @@ public class ContactDetails extends AppCompatActivity {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
+
+
+
+            RelativeLayout invitationLayout = new RelativeLayout(this);
+            RelativeLayout.LayoutParams IRLParams = new RelativeLayout.LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            invitationLayout.setLayoutParams(IRLParams);
+
+            TextView inDivider = new TextView(this);
+            inDivider.setId(View.generateViewId());
+            ImageView addUserIcon = new ImageView(this);
+            TextView invitationLabel = new TextView(this);
+            invitationLabel.setId(View.generateViewId());
+
+            RelativeLayout.LayoutParams inLParams = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            inLParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+
+            RelativeLayout.LayoutParams addUserIconParams = new RelativeLayout.LayoutParams(48, 48);
+            addUserIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+
+            RelativeLayout.LayoutParams inDividerParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 1);
+            inDividerParams.addRule(RelativeLayout.BELOW, invitationLabel.getId());
+            inDividerParams.setMargins(0, 20, 0, 10);
+
+        if (!isRoster) {
+            invitationLabel.setText("Add Contact to my Network");
+            invitationLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
+            addUserIcon.setOnClickListener(this);
+            addUserIcon.setImageResource(R.drawable.ic_add_user);
+
+        }else{
+            invitationLabel.setText("Remove Contact from my Network");
+            invitationLabel.setTextColor(getResources().getColor(R.color.red));
+            addUserIcon.setOnClickListener(this);
+            addUserIcon.setImageResource(R.drawable.ic_remove_user);
+        }
+            if (invitationLabel.getParent() != null)
+                ((ViewGroup) invitationLabel.getParent()).removeView(invitationLabel);
+            invitationLayout.addView(invitationLabel, inLParams);
+
+
+            if (addUserIcon.getParent() != null)
+                ((ViewGroup) addUserIcon.getParent()).removeView(addUserIcon);
+            invitationLayout.addView(addUserIcon, addUserIconParams);
+
+            invitationLayout.addView(inDivider, inDividerParams);
+
+            if (invitationLayout.getParent() != null)
+                ((ViewGroup) invitationLayout.getParent()).removeView(invitationLayout);
+            linearLayout.addView(invitationLayout);
+
+
+
+
         int emailsCount = mContact.emailAddresses.size();
         int phoneCount = mContact.phoneNumbers.size();
 
@@ -72,10 +124,8 @@ public class ContactDetails extends AppCompatActivity {
             TextView workEmailValue = new TextView(this);
             workEmailValue.setId(View.generateViewId());
             ImageView icon = new ImageView(this);
-            ImageView addUserIcon = new ImageView(this);
             TextView divider = new TextView(this);
             divider.setId(View.generateViewId());
-            TextView invitationLabel = new TextView(this);
 
             RelativeLayout relativeLayout = new RelativeLayout(this);
             RelativeLayout.LayoutParams RLParams = new RelativeLayout.LayoutParams(
@@ -86,16 +136,11 @@ public class ContactDetails extends AppCompatActivity {
             dividerParams.addRule(RelativeLayout.BELOW, workEmailValue.getId());
             dividerParams.setMargins(0, 20, 0, 10);
 
-
             RelativeLayout.LayoutParams iconParams = new RelativeLayout.LayoutParams(48, 48);
             iconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 
             RelativeLayout.LayoutParams emailParams = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            RelativeLayout.LayoutParams inLParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            inLParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,RelativeLayout.TRUE);
 
             RelativeLayout.LayoutParams emailValueParams = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -112,8 +157,8 @@ public class ContactDetails extends AppCompatActivity {
                 ((ViewGroup) workEmail.getParent()).removeView(workEmail);
             relativeLayout.addView(workEmail, emailParams);
 
-            String EMAIL = mContact.emailAddresses.get(i).toString();
-            workEmailValue.setText(EMAIL);
+            String email = mContact.emailAddresses.get(i).toString();
+            workEmailValue.setText(email);
             if (workEmailValue.getParent() != null)
                 ((ViewGroup) workEmailValue.getParent()).removeView(workEmailValue);
             relativeLayout.addView(workEmailValue, emailValueParams);
@@ -131,19 +176,7 @@ public class ContactDetails extends AppCompatActivity {
             if (relativeLayout.getParent() != null)
                 ((ViewGroup) relativeLayout.getParent()).removeView(relativeLayout);
             linearLayout.addView(relativeLayout);
-//
-//            if(!isRoster){
-//                if (divider.getParent() != null)
-//                    ((ViewGroup) divider.getParent()).removeView(divider);
-//                relativeLayout.addView(divider, dividerParams);
-//                invitationLabel.setText("Add Contact to my Network");
-//                invitationLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
-//                if (invitationLabel.getParent() != null)
-//                    ((ViewGroup) invitationLabel.getParent()).removeView(invitationLabel);
-//                relativeLayout.addView(invitationLabel, inLParams);
-//
-//
-//            }
+
 
 
         }
@@ -155,7 +188,6 @@ public class ContactDetails extends AppCompatActivity {
             phoneValue.setId(View.generateViewId());
             ImageView icon = new ImageView(this);
             TextView divider = new TextView(this);
-
 
             RelativeLayout relativeLayout = new RelativeLayout(this);
             RelativeLayout.LayoutParams RLParams = new RelativeLayout.LayoutParams(
@@ -190,8 +222,8 @@ public class ContactDetails extends AppCompatActivity {
                 ((ViewGroup) phoneLabel.getParent()).removeView(phoneLabel);
             relativeLayout.addView(phoneLabel, emailParams);
 
-            String EMAIL = mContact.phoneNumbers.get(i).toString();
-            phoneValue.setText(EMAIL);
+            String phone = mContact.phoneNumbers.get(i).toString();
+            phoneValue.setText(phone);
             if (phoneValue.getParent() != null)
                 ((ViewGroup) phoneValue.getParent()).removeView(phoneValue);
             relativeLayout.addView(phoneValue, emailValueParams);
@@ -210,13 +242,29 @@ public class ContactDetails extends AppCompatActivity {
                 ((ViewGroup) relativeLayout.getParent()).removeView(relativeLayout);
             linearLayout.addView(relativeLayout);
 
-
         }
 
+    }
 
+    @Override
+    public void onClick(View view) {
+        Toast.makeText(getBaseContext(),"clicked",Toast.LENGTH_SHORT).show();
+        String mainEmail=mContact.emailAddresses.get(0).toString();
+        String id= mContact.corporateId;
+        Log.d(TAG, "onClick: "+mainEmail);
+        RainbowSdk.instance().contacts().inviteUserNotRegisterToRainbow(id,mainEmail,mainEmail, new IRainbowSentInvitationListener() {
+            @Override
+            public void onInvitationSentSuccess(String s) {
+                Log.d(TAG,s);
+            }
+            @Override
+            public void onInvitationSentError(RainbowServiceException e) {
+                Log.d(  TAG,"onInvitationSentError: "+e.toString());
+            }
+            @Override
+            public void onInvitationError() {
 
-
-
-
+            }
+        });
     }
 }

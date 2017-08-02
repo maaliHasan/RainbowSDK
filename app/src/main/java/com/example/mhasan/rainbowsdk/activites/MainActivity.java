@@ -83,9 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -187,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         RainbowSdk.instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                RainbowSdk.instance().connection().signin("mhasan@asaltech.com", "Asal@123", new SigninResponseListener() {
+                RainbowSdk.instance().connection().signin("mhasan@asaltech.com", "Password_123","sandbox.openrainbow.com",new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected

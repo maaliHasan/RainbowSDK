@@ -141,6 +141,9 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         String OfficePhone=contact.getFirstAvailableNumber();
         String MobilePhone=contact.getFirstMobilePhoneNumber();
         String isRoster=String.valueOf(contact.isRoster());
+        String id=contact.getCompanyId();
+        String firstEmail=contact.getFirstEmailAddress();
+        String mainEmail=contact.getMainEmailAddress();
         if (!workEmail.isEmpty()) {
             contactEmails.add(workEmail);
         }
@@ -159,7 +162,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
-        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster));
+        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id));
 
         startActivity(intent);
     }

@@ -106,7 +106,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     @Override
     public void onItemClicked(int position) {
 
-        String corporateId=mContactList.get(position).getCorporateId();
+        final String corporateId=mContactList.get(position).getCorporateId();
         RainbowSdk.instance().contacts().getUserDataFromId(corporateId, new IUserProxy.IGetUserDataListener() {
             @Override
             public void onSuccess(Contact contact) {
@@ -123,13 +123,13 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     public  void  getContactDetails(Contact contact){
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
-        mEmails = contact.getEmailAddresses();
+        mEmails  = contact.getEmailAddresses();
+        String id= contact.getCorporateId();
         String workEmail = contact.getEmailAddressForType(EmailAddress.EmailType.WORK);
         String homeEmail = contact.getEmailAddressForType(EmailAddress.EmailType.HOME);
         String OfficePhone=contact.getFirstAvailableNumber();
         String MobilePhone=contact.getFirstMobilePhoneNumber();
         String isRoster=String.valueOf(contact.isRoster());
-
         if (!workEmail.isEmpty()) {
             contactEmails.add(workEmail);
         }
@@ -148,7 +148,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
-        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster));
+        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id));
 
         startActivity(intent);
     }
