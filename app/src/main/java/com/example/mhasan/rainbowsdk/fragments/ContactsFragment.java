@@ -8,40 +8,35 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.EmailAddress;
 import com.ale.infra.contact.PhoneNumber;
 import com.ale.infra.contact.RainbowPresence;
+import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
 import com.ale.infra.list.ArrayItemList;
 import com.ale.infra.list.IItemListChangeListener;
+import com.ale.infra.proxy.users.IUserProxy;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.activites.ContactData;
 import com.example.mhasan.rainbowsdk.activites.ContactDetails;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import static android.media.CamcorderProfile.get;
-import static android.util.Config.LOGD;
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
-import static com.neovisionaries.i18n.LanguageCode.ho;
-import static org.jivesoftware.smack.packet.IQ.Type.set;
+
 
 /**
  * Created by mhasan on 7/20/2017.
+ *
  */
 
-public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener, Serializable {
+public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener {
     public static final String TAG = ContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
     private ContactsAdapter mContactAD;
@@ -110,38 +105,50 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
     @Override
     public void onItemClicked(int position) {
-        ArrayList<String> testEmails = new ArrayList<>();
-        String workEmail=mContactList.get(position).getEmailAddressForType(EmailAddress.EmailType.WORK);
-        String homeEmail =mContactList.get(position).getEmailAddressForType(EmailAddress.EmailType.HOME);
-        if(! workEmail.equals("")){
-            testEmails.add(workEmail);
+
+        String corporateId=mContactList.get(position).getCorporateId();
+        RainbowSdk.instance().contacts().getUserDataFromId(corporateId, new IUserProxy.IGetUserDataListener() {
+            @Override
+            public void onSuccess(Contact contact) {
+                getContactDetails(contact);
+            }
+
+            @Override
+            public void onFailure(RainbowServiceException exception) {
+
+            }
+        });
+
+    }
+    public  void  getContactDetails(Contact contact){
+        ArrayList<String> contactEmails = new ArrayList<>();
+        ArrayList<String> contactPhones = new ArrayList<>();
+        mEmails = contact.getEmailAddresses();
+        String workEmail = contact.getEmailAddressForType(EmailAddress.EmailType.WORK);
+        String homeEmail = contact.getEmailAddressForType(EmailAddress.EmailType.HOME);
+        String OfficePhone=contact.getFirstAvailableNumber();
+        String MobilePhone=contact.getFirstMobilePhoneNumber();
+        String isRoster=String.valueOf(contact.isRoster());
+
+        if (!workEmail.isEmpty()) {
+            contactEmails.add(workEmail);
         }
-        if(! homeEmail.isEmpty()){
-            testEmails.add(homeEmail);
+        if (!homeEmail.isEmpty()) {
+            contactEmails.add(homeEmail);
+        }
+        if (!OfficePhone.isEmpty()) {
+            contactPhones.add(OfficePhone);
+        }
+        if (!MobilePhone.isEmpty()) {
+            contactPhones.add(MobilePhone);
         }
 
-
-        mEmails = mContactList.get(position).getEmailAddresses();
-        mPhones = mContactList.get(position).getPhoneNumbers();
-//        for (int i = 0; i < mEmails.size(); i++) {
-//            if (mEmails.contains(EmailAddress.EmailType.WORK)) {
-//                String value = EmailAddress.EmailType.WORK.getValue();
-//                Log.d(value, "onItemClicked: ");
-//                testEmails.add(value);
-//            } else if (mEmails.contains(EmailAddress.EmailType.HOME)) {
-//                String value = EmailAddress.EmailType.WORK.getValue();
-//                Log.d(value, "onItemClicked2: ");
-//                testEmails.add(value);
-//            }
-//
-//        }
-
-        String fullName = mContactList.get(position).getFirstName() + " " + mContactList.get(position).getLastName();
-        String jobTitle = mContactList.get(position).getJobTitle();
-        Bitmap profilePic = mContactList.get(position).getPhoto();
-        RainbowPresence presence = mContactList.get(position).getPresence();
+        String fullName = contact.getFirstName() + " " + contact.getLastName();
+        String jobTitle = contact.getJobTitle();
+        Bitmap profilePic = contact.getPhoto();
+        RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
-        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), testEmails));
+        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster));
 
         startActivity(intent);
     }

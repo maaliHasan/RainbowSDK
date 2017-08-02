@@ -3,15 +3,7 @@ package com.example.mhasan.rainbowsdk.activites;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.ale.infra.contact.EmailAddress;
-import com.ale.infra.contact.PhoneNumber;
-import com.ale.infra.contact.RainbowPresence;
-
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -24,15 +16,18 @@ public class ContactData implements Parcelable {
     public String fullName;
     public Bitmap profilePic;
     public String presence;
+    public String isRoster;
     public ArrayList<String> emailAddresses = new ArrayList<>();
-    public Set<PhoneNumber> phoneNumbers = new HashSet< >();
+    public ArrayList<String> phoneNumbers = new ArrayList< >();
 
-    public ContactData( String fullName,String jobTitle, Bitmap profilePic, String presence, ArrayList<String> emailAddresses) {
+    public ContactData(String jobTitle, String fullName, Bitmap profilePic, String presence,ArrayList<String> emailAddresses, ArrayList<String> phoneNumbers,String isRoster) {
         this.jobTitle = jobTitle;
         this.fullName = fullName;
         this.profilePic = profilePic;
         this.presence = presence;
+        this.isRoster = isRoster;
         this.emailAddresses = emailAddresses;
+        this.phoneNumbers = phoneNumbers;
     }
 
     protected ContactData(Parcel in) {
@@ -40,7 +35,25 @@ public class ContactData implements Parcelable {
         fullName = in.readString();
         profilePic = in.readParcelable(Bitmap.class.getClassLoader());
         presence = in.readString();
+        isRoster = in.readString();
         emailAddresses = in.createStringArrayList();
+        phoneNumbers = in.createStringArrayList();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(jobTitle);
+        dest.writeString(fullName);
+        dest.writeParcelable(profilePic, flags);
+        dest.writeString(presence);
+        dest.writeString(isRoster);
+        dest.writeStringList(emailAddresses);
+        dest.writeStringList(phoneNumbers);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ContactData> CREATOR = new Creator<ContactData>() {
@@ -54,18 +67,4 @@ public class ContactData implements Parcelable {
             return new ContactData[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(jobTitle);
-        parcel.writeString(fullName);
-        parcel.writeParcelable(profilePic, i);
-        parcel.writeString(presence);
-        parcel.writeStringList(emailAddresses);
-    }
 }

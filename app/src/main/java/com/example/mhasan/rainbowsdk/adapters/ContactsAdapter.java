@@ -17,11 +17,10 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.google.android.gms.internal.zzs.TAG;
-import static com.neovisionaries.i18n.LanguageCode.co;
 
 /**
  * Created by mhasan on 7/20/2017.
+ *
  */
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder> {

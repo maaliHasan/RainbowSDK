@@ -32,6 +32,16 @@ public class DirectoryContactsAdapter extends RecyclerView.Adapter<DirectoryCont
         this.mContactList = contactList;
     }
 
+    public interface OnItemClickListener {
+        void onItemClicked(int position);
+    }
+
+    private OnItemClickListener mListener;
+
+    public void setOnItemClickedListener(OnItemClickListener listener) {
+        this.mListener = listener;
+    }
+
 
     @Override
     public dataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -62,7 +72,7 @@ public class DirectoryContactsAdapter extends RecyclerView.Adapter<DirectoryCont
         return mContactList.size();
     }
 
-    class dataHolder extends RecyclerView.ViewHolder {
+    class dataHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView fullName;
         CircleImageView profilePic;
         ImageView userIcon;
@@ -74,6 +84,12 @@ public class DirectoryContactsAdapter extends RecyclerView.Adapter<DirectoryCont
             profilePic = itemView.findViewById(R.id.profile_pic);
             userIcon=itemView.findViewById(R.id.contactIcon);
             noResult=itemView.findViewById(R.id.noResult);
+            userIcon.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mListener.onItemClicked(getAdapterPosition());
         }
     }
 
