@@ -25,6 +25,8 @@ import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+
 /**
  * Created by mhasan on 7/30/2017.
  *
@@ -151,8 +153,8 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
             linearLayout.addView(invitationLayout);
         /**
          * for testing till isRoster bug fixed !
-         */
-        if( mContact.emailAddresses.get(0).toString().equals("maaliahasan@gmail.com")){
+
+        if( mContact.emailAddresses.get(0).toString().equals("mabedalkareem@asaltech.com")){
             invitationLabel.setText("Remove Contact from my Network");
             invitationLabel.setTextColor(getResources().getColor(R.color.red));
             addUserIcon.setId(R.id.removeContact);
@@ -299,10 +301,13 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
     public void onClick(View view) {
         String mainEmail=mContact.emailAddresses.get(0);
         String id= mContact.corporateId;
-        Log.d(TAG, "onClick: "+mainEmail);
+        String jid=mContact.jId;
+        Log.d(TAG, "onClick: "+ mainEmail);
+        Log.d(TAG, "onclick :"+ id);
+        Log.d(TAG, "onclick :jid "+ jid);
         switch(view.getId()){
             case R.id.removeContact:
-               RainbowSdk.instance().contacts().removeContactFromRoster(id,mainEmail,mRemoveContactListener);
+               RainbowSdk.instance().contacts().removeContactFromRoster(jid,mainEmail,mRemoveContactListener);
                 break;
             case  R.id.addContact:
                 RainbowSdk.instance().contacts().addRainbowContactToRoster(id,mainEmail,mAddContactListener);

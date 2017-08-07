@@ -19,10 +19,11 @@ public class ContactData implements Parcelable {
     public String presence;
     public String isRoster;
     public String corporateId ;
+    public String jId;
     public ArrayList<String> emailAddresses = new ArrayList<>();
     public ArrayList<String> phoneNumbers = new ArrayList<>();
 
-    public ContactData(String fullName ,String jobTitle , Bitmap profilePic, String presence, ArrayList<String> emailAddresses, ArrayList<String> phoneNumbers, String isRoster, String corporateId) {
+    public ContactData(String fullName ,String jobTitle , Bitmap profilePic, String presence, ArrayList<String> emailAddresses, ArrayList<String> phoneNumbers, String isRoster, String corporateId ,String jId) {
         this.jobTitle = jobTitle;
         this.fullName = fullName;
         this.profilePic = profilePic;
@@ -31,7 +32,9 @@ public class ContactData implements Parcelable {
         this.corporateId = corporateId;
         this.emailAddresses = emailAddresses;
         this.phoneNumbers = phoneNumbers;
+        this.jId=jId;
     }
+
 
     protected ContactData(Parcel in) {
         jobTitle = in.readString();
@@ -40,6 +43,7 @@ public class ContactData implements Parcelable {
         presence = in.readString();
         isRoster = in.readString();
         corporateId = in.readString();
+        jId = in.readString();
         emailAddresses = in.createStringArrayList();
         phoneNumbers = in.createStringArrayList();
     }
@@ -69,6 +73,7 @@ public class ContactData implements Parcelable {
         parcel.writeString(presence);
         parcel.writeString(isRoster);
         parcel.writeString(corporateId);
+        parcel.writeString(jId);
         parcel.writeStringList(emailAddresses);
         parcel.writeStringList(phoneNumbers);
     }

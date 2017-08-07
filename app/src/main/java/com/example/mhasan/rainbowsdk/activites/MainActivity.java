@@ -167,13 +167,12 @@ public class MainActivity extends AppCompatActivity {
         RainbowSdk.instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                RainbowSdk.instance().connection().signin("mhasan@asaltech.com","Asal@123",new SigninResponseListener() {
+                RainbowSdk.instance().connection().signin("mhasan@asaltech.com","Password_123","sandbox.openrainbow.com",new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected
                         // Do something on the thread UI
                         Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
-
                     }
 
                     @Override

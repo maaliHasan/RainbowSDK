@@ -25,7 +25,9 @@ import com.example.mhasan.rainbowsdk.activites.ContactData;
 import com.example.mhasan.rainbowsdk.activites.ContactDetails;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
+import static android.R.id.list;
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
 
 
@@ -45,7 +47,15 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         @Override
         public void contactUpdated(Contact contact) {
             Log.d(TAG, "contactUpdated: "+contact.getFirstName());
-            
+            ListIterator<Contact> iterator = mContactList.listIterator();
+            while (iterator.hasNext()) {
+                Contact next = iterator.next();
+                if (next.equals(contact)) {
+                    iterator.set(contact);
+
+                }
+            }
+            mContactAD.notifyDataSetChanged();
         }
 
         @Override
@@ -135,6 +145,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
         String id= contact.getCorporateId();
+        String jId=contact.getContactId();
         String workEmail = contact.getEmailAddressForType(EmailAddress.EmailType.WORK);
         String homeEmail = contact.getEmailAddressForType(EmailAddress.EmailType.HOME);
         String OfficePhone=contact.getFirstAvailableNumber();
@@ -158,7 +169,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
-        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id));
+        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id ,jId));
 
         startActivity(intent);
     }
