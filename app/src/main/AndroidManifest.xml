@@ -26,7 +26,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activites.ContactDetails"></activity>
-        <activity android:name=".activites.RainbowContacts"></activity>
     </application>
 
 </manifest>

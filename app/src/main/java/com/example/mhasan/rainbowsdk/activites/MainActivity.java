@@ -102,23 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                RainbowSdk.instance().contacts().searchByJid("b4026adf6515458db4aa75319a303432@openrainbow.com", new IContactSearchListener() {
-//                    @Override
-//                    public void searchStarted() {
-//                    }
-//
-//                    @Override
-//                    public void searchFinished(List<DirectoryContact> list) {
-//                        Log.d(TAG, "searchFinished: ");
-//                        DirectoryContact contact= list.get(0);
-//                    }
-//
-//                    @Override
-//                    public void searchError() {
-//                        Log.d(TAG, "searchError: ");
-//
-//                    }
-//                });
               //  mRelativeLayout.setVisibility(View.GONE);
                 mFragmentsContent.setVisibility(View.VISIBLE);
                 FragmentManager fragmentManager = getSupportFragmentManager();
@@ -127,9 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.add(R.id.fragmentsContent, DContactFatagment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-//                Intent intent = new Intent(MainActivity.this, RainbowContacts.class);
-//                startActivity(intent);
-
                 return false;
             }
         });
