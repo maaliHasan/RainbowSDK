@@ -26,7 +26,7 @@ import static com.example.mhasan.rainbowsdk.R.id.contactList;
  *
  */
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder>  implements Contact.ContactListener{
+public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder>  {
     public static final String TAG=ContactsAdapter.class.getSimpleName();
     ArrayList<Contact> contactList;
     private LayoutInflater inflater;
@@ -38,23 +38,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
         this.contactList = contactList;
     }
 
-    @Override
-    public void contactUpdated(Contact contact) {
-        Log.d(TAG, "contactUpdated: "+contact.getFirstName());
-
-
-    }
-
-    @Override
-    public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
-        Log.d(TAG, "onPresenceChanged: "+contact.getFirstName()+"  "+rainbowPresence.getPresence());
-
-    }
-
-    @Override
-    public void onActionInProgress(boolean b) {
-
-    }
 
     public interface OnItemClickListener {
         void onItemClicked(int position);
@@ -76,7 +59,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
     @Override
     public void onBindViewHolder(dataHolder holder, int position) {
         Contact currentContact = contactList.get(position);
-        currentContact.registerChangeListener(this);
         String fullName = currentContact.getFirstName() + " " + currentContact.getLastName();
         holder.contactPresence.setText(currentContact.getPresence().getPresence());
         holder.fullName.setText(fullName);

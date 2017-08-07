@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,13 +34,30 @@ import static com.example.mhasan.rainbowsdk.R.id.contactList;
  *
  */
 
-public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener {
+public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener{
     public static final String TAG = ContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
     private ContactsAdapter mContactAD;
     ArrayList<Contact> mContactList;
     private ProgressDialog pDialog;
+    private Contact.ContactListener m_contactListener= new Contact.ContactListener(){
 
+        @Override
+        public void contactUpdated(Contact contact) {
+            Log.d(TAG, "contactUpdated: "+contact.getFirstName());
+            
+        }
+
+        @Override
+        public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
+            Log.d(TAG, "onPresenceChanged: "+contact.getFirstName()+"  "+rainbowPresence.getPresence());
+        }
+
+        @Override
+        public void onActionInProgress(boolean b) {
+
+        }
+    };
     private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
         @Override
         public void dataChanged() {
@@ -54,6 +72,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
             int size = arrayItemList.getCount();
             for (int i = 0; i < size; i++) {
                 Contact contact = (Contact) arrayItemList.get(i);
+                contact.registerChangeListener(m_contactListener);
                 mContactList.add(contact);
             }
             pDialog.dismiss();
@@ -143,4 +162,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
         startActivity(intent);
     }
+
+
 }
