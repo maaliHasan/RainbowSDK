@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.EmailAddress;
-import com.ale.infra.contact.PhoneNumber;
 import com.ale.infra.contact.RainbowPresence;
 import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
 import com.ale.infra.list.ArrayItemList;
@@ -25,8 +24,6 @@ import com.example.mhasan.rainbowsdk.activites.ContactData;
 import com.example.mhasan.rainbowsdk.activites.ContactDetails;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
 
@@ -41,8 +38,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     private RecyclerView mContactRV;
     private ContactsAdapter mContactAD;
     ArrayList<Contact> mContactList;
-    private Set<EmailAddress> mEmails;
-    private Set<PhoneNumber> mPhones;
     private ProgressDialog pDialog;
 
     private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
@@ -70,8 +65,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.mContactList = new ArrayList<>();
-        this.mEmails = new HashSet<>();
-        this.mPhones = new HashSet<>();
         View rootView = inflater.inflate(R.layout.fragment_contacts, container, false);
         return rootView;
     }
@@ -93,7 +86,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         RainbowSdk.instance().contacts().getRainbowContacts().unregisterChangeListener(m_changeListener);
         super.onDestroyView();
     }
-
 
     public void loadDialog() {
         pDialog = new ProgressDialog(getActivity());
@@ -123,7 +115,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     public  void  getContactDetails(Contact contact){
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
-        mEmails  = contact.getEmailAddresses();
         String id= contact.getCorporateId();
         String workEmail = contact.getEmailAddressForType(EmailAddress.EmailType.WORK);
         String homeEmail = contact.getEmailAddressForType(EmailAddress.EmailType.HOME);

@@ -1,4 +1,4 @@
-package com.example.mhasan.rainbowsdk.fragments;
+package com.example.mhasan.rainbowsdk.activites;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -6,17 +6,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.DirectoryContact;
@@ -24,24 +18,20 @@ import com.ale.infra.contact.EmailAddress;
 import com.ale.infra.contact.IContactSearchListener;
 import com.ale.infra.contact.RainbowPresence;
 import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
-import com.ale.infra.list.IItemListChangeListener;
 import com.ale.infra.proxy.users.IUserProxy;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
-import com.example.mhasan.rainbowsdk.activites.ContactData;
-import com.example.mhasan.rainbowsdk.activites.ContactDetails;
-import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
 import com.example.mhasan.rainbowsdk.adapters.DirectoryContactsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by mhasan on 7/25/2017.
+ * Created by mhasan on 8/6/2017.
  *
  */
 
-public class DirectoryContactsFragment extends Fragment implements DirectoryContactsAdapter.OnItemClickListener {
+public class RainbowContacts extends AppCompatActivity implements DirectoryContactsAdapter.OnItemClickListener {
     private RecyclerView mContactRV;
     private DirectoryContactsAdapter mContactAD;
     ArrayList<DirectoryContact> mContactList;
@@ -61,7 +51,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
                 mContactList.add(contact);
             }
 
-            getActivity().runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mContactAD.notifyDataSetChanged();
@@ -75,32 +65,35 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         }
     };
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.mContactList = new ArrayList<>();
-        setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.fragment_directory_contacts, container, false);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mContactRV = getActivity().findViewById(R.id.directoryContactList);
-        mContactAD=new DirectoryContactsAdapter(getContext(),mContactList);
-        mContactAD.setOnItemClickedListener(this);
-        mContactRV.setAdapter(mContactAD);
-        mContactRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+       @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_directory_contacts);
+           this.mContactList = new ArrayList<>();
+           mContactRV = (RecyclerView) findViewById(R.id.directoryContactList);
+           mContactAD=new DirectoryContactsAdapter(this,mContactList);
+           mContactAD.setOnItemClickedListener(this);
+           mContactRV.setAdapter(mContactAD);
+           mContactRV.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+    protected void onStart() {
+        super.onStart();
+//        mContactRV = (RecyclerView) findViewById(R.id.directoryContactList);
+//        mContactAD=new DirectoryContactsAdapter(this,mContactList);
+//        mContactAD.setOnItemClickedListener(this);
+//        mContactRV.setAdapter(mContactAD);
+//        mContactRV.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -113,7 +106,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
                 return false;
             }
         });
-
+        return true;
     }
 
     @Override
@@ -132,7 +125,6 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         });
 
     }
-
     public  void  getContactDetails(Contact contact){
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
@@ -161,11 +153,20 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         String jobTitle = contact.getJobTitle();
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
-        Intent intent = new Intent(getActivity(), ContactDetails.class);
+        Intent intent = new Intent(this, ContactDetails.class);
         intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id));
 
         startActivity(intent);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        int fragmentsCount = getSupportFragmentManager().getBackStackEntryCount();
+        if (fragmentsCount > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

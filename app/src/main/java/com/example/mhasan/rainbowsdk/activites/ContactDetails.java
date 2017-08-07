@@ -14,7 +14,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.Toast;
+
+import com.ale.infra.application.RainbowContext;
+import com.ale.infra.contact.Contact;
 import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
+import com.ale.infra.list.ArrayItemList;
+import com.ale.listener.IRainbowContactManagementListener;
 import com.ale.listener.IRainbowSentInvitationListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
@@ -28,6 +33,40 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactDetails extends AppCompatActivity  implements View.OnClickListener{
     ContactData mContact;
     public static final String TAG= ContactDetails.class.getSimpleName();
+    private IRainbowSentInvitationListener mAddContactListener= new IRainbowSentInvitationListener(){
+
+        @Override
+        public void onInvitationSentSuccess(String s) {
+            Log.d(TAG, "onInvitationSentSuccess: "+s);
+        }
+
+        @Override
+        public void onInvitationSentError(RainbowServiceException e) {
+            Log.d(TAG, "onInvitationSentError: "+e.getDetailsMessage());
+        }
+
+        @Override
+        public void onInvitationError() {
+            Log.d(TAG, "onInvitationError: ");
+
+        }
+    };
+
+    private IRainbowContactManagementListener mRemoveContactListener= new IRainbowContactManagementListener(){
+
+        @Override
+        public void OnContactRemoveSuccess(String s) {
+            Log.d(TAG, "OnContactRemoveSuccess: "+s);
+
+        }
+
+        @Override
+        public void onContactRemovedError(Exception e) {
+            Log.d(TAG, "onContactRemovedError: "+e.toString());
+
+        }
+    };
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,9 +99,6 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-
-
-
             RelativeLayout invitationLayout = new RelativeLayout(this);
             RelativeLayout.LayoutParams IRLParams = new RelativeLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -89,11 +125,13 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
             invitationLabel.setText("Add Contact to my Network");
             invitationLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
             addUserIcon.setOnClickListener(this);
+            addUserIcon.setId(R.id.addContact);
             addUserIcon.setImageResource(R.drawable.ic_add_user);
 
         }else{
             invitationLabel.setText("Remove Contact from my Network");
             invitationLabel.setTextColor(getResources().getColor(R.color.red));
+            addUserIcon.setId(R.id.removeContact);
             addUserIcon.setOnClickListener(this);
             addUserIcon.setImageResource(R.drawable.ic_remove_user);
         }
@@ -111,9 +149,20 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
             if (invitationLayout.getParent() != null)
                 ((ViewGroup) invitationLayout.getParent()).removeView(invitationLayout);
             linearLayout.addView(invitationLayout);
+        /**
+         * for testing till isRoster bug fixed !
+         */
+        if( mContact.emailAddresses.get(0).toString().equals("maaliahasan@gmail.com")){
+            invitationLabel.setText("Remove Contact from my Network");
+            invitationLabel.setTextColor(getResources().getColor(R.color.red));
+            addUserIcon.setId(R.id.removeContact);
+            addUserIcon.setOnClickListener(this);
+            addUserIcon.setImageResource(R.drawable.ic_remove_user);
+
+        }
 
 
-
+        /****/
 
         int emailsCount = mContact.emailAddresses.size();
         int phoneCount = mContact.phoneNumbers.size();
@@ -248,23 +297,19 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(getBaseContext(),"clicked",Toast.LENGTH_SHORT).show();
-        String mainEmail=mContact.emailAddresses.get(0).toString();
+        String mainEmail=mContact.emailAddresses.get(0);
         String id= mContact.corporateId;
         Log.d(TAG, "onClick: "+mainEmail);
-        RainbowSdk.instance().contacts().inviteUserNotRegisterToRainbow(id,mainEmail,mainEmail, new IRainbowSentInvitationListener() {
-            @Override
-            public void onInvitationSentSuccess(String s) {
-                Log.d(TAG,s);
-            }
-            @Override
-            public void onInvitationSentError(RainbowServiceException e) {
-                Log.d(  TAG,"onInvitationSentError: "+e.toString());
-            }
-            @Override
-            public void onInvitationError() {
+        switch(view.getId()){
+            case R.id.removeContact:
+               RainbowSdk.instance().contacts().removeContactFromRoster(id,mainEmail,mRemoveContactListener);
+                break;
+            case  R.id.addContact:
+                RainbowSdk.instance().contacts().addRainbowContactToRoster(id,mainEmail,mAddContactListener);
 
-            }
-        });
+
+        }
+
     }
+
 }

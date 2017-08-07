@@ -1,5 +1,6 @@
 package com.example.mhasan.rainbowsdk.activites;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.app.SearchManager;
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                    }
 //                });
-                mRelativeLayout.setVisibility(View.GONE);
+              //  mRelativeLayout.setVisibility(View.GONE);
                 mFragmentsContent.setVisibility(View.VISIBLE);
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -126,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.add(R.id.fragmentsContent, DContactFatagment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-
+//                Intent intent = new Intent(MainActivity.this, RainbowContacts.class);
+//                startActivity(intent);
 
                 return false;
             }
@@ -185,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         RainbowSdk.instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                RainbowSdk.instance().connection().signin("mhasan@asaltech.com", "Password_123","sandbox.openrainbow.com",new SigninResponseListener() {
+                RainbowSdk.instance().connection().signin("mhasan@asaltech.com","Asal@123",new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected
