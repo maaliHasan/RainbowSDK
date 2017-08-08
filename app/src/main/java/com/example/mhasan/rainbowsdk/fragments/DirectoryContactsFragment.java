@@ -141,7 +141,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         String OfficePhone=contact.getFirstAvailableNumber();
         String MobilePhone=contact.getFirstMobilePhoneNumber();
         String isRoster=String.valueOf(contact.isRoster());
-        String id=contact.getCompanyId();
+        String id=contact.getCorporateId();
         String jId=contact.getContactId();
         String firstEmail=contact.getFirstEmailAddress();
         String mainEmail=contact.getMainEmailAddress();
