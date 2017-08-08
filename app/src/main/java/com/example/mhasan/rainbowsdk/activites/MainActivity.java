@@ -162,7 +162,10 @@ public class MainActivity extends AppCompatActivity {
                 getString(R.string.app_name),
                 "Connect to the app",
                 Color.RED);
-        RainbowSdk.instance().initialize(); // Will change in the future
+        if ( ! RainbowSdk.instance().isInitialized()){
+            RainbowSdk.instance().initialize(); // Will change in the future
+        }
+
 
         RainbowSdk.instance().connection().start(new StartResponseListener() {
             @Override
@@ -205,5 +208,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
     }
 }

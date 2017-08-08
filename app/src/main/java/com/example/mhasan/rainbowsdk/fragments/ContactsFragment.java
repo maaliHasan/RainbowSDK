@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +38,7 @@ import static com.example.mhasan.rainbowsdk.R.id.contactList;
  *
  */
 
-public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener{
+public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener  {
     public static final String TAG = ContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
     private ContactsAdapter mContactAD;
@@ -46,7 +48,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
         @Override
         public void contactUpdated(Contact contact) {
-            Log.d(TAG, "contactUpdated: "+contact.getFirstName());
             ListIterator<Contact> iterator = mContactList.listIterator();
             while (iterator.hasNext()) {
                 Contact next = iterator.next();
@@ -133,13 +134,11 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
             public void onSuccess(Contact contact) {
                 getContactDetails(contact);
             }
-
             @Override
             public void onFailure(RainbowServiceException exception) {
 
             }
         });
-
     }
     public  void  getContactDetails(Contact contact){
         ArrayList<String> contactEmails = new ArrayList<>();
@@ -163,14 +162,12 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         if (!MobilePhone.isEmpty()) {
             contactPhones.add(MobilePhone);
         }
-
         String fullName = contact.getFirstName() + " " + contact.getLastName();
         String jobTitle = contact.getJobTitle();
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
         intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id ,jId));
-
         startActivity(intent);
     }
 
