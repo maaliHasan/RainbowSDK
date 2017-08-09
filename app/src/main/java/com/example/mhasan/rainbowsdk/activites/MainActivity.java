@@ -9,6 +9,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -40,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     private RelativeLayout mRelativeLayout;
     private RelativeLayout mFragmentsContent;
+    private ListView mDrawerList;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -62,8 +68,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         connectToRainbow();
 
+
         mRelativeLayout = (RelativeLayout) findViewById(R.id.viewPagerLayout);
         mFragmentsContent = (RelativeLayout) findViewById(R.id.fragmentsContent);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mCategoriesAdapter = new CategoriesAdApter(this, getSupportFragmentManager());
@@ -145,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_contacts, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            TextView textView =(TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
@@ -170,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         RainbowSdk.instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                RainbowSdk.instance().connection().signin("mhasan@asaltech.com","Password_123","sandbox.openrainbow.com",new SigninResponseListener() {
+                RainbowSdk.instance().connection().signin("mhasan@asaltech.com","Asal@123",new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected

@@ -42,6 +42,7 @@ import java.util.List;
  */
 
 public class DirectoryContactsFragment extends Fragment implements DirectoryContactsAdapter.OnItemClickListener {
+    private final static String TAG=DirectoryContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
     private DirectoryContactsAdapter mContactAD;
     ArrayList<DirectoryContact> mContactList;
@@ -119,6 +120,10 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
     @Override
     public void onItemClicked(int position) {
         String corporateId=mContactList.get(position).getCorporateId();
+//        String contactId= mContactList.get(position).getId();
+//        Contact currentContact = (Contact)RainbowSdk.instance().contacts().getContactFromId(contactId);
+//        Log.d(TAG, "onItemClicked: "+currentContact.getFirstName());
+//        getContactDetails(currentContact);
         RainbowSdk.instance().contacts().getUserDataFromId(corporateId, new IUserProxy.IGetUserDataListener() {
             @Override
             public void onSuccess(Contact contact) {

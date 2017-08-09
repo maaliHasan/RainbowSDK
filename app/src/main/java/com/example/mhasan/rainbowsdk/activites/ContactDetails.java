@@ -25,6 +25,9 @@ import com.example.mhasan.rainbowsdk.R;
 import java.util.ListIterator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.neovisionaries.i18n.LanguageCode.cu;
+
 /**
  * Created by mhasan on 7/30/2017.
  *
@@ -33,31 +36,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactDetails extends AppCompatActivity  implements View.OnClickListener{
     ContactData mContact;
     public static final String TAG= ContactDetails.class.getSimpleName();
-//    private Contact.ContactListener m_contactListener= new Contact.ContactListener(){
-//
-//        @Override
-//        public void contactUpdated(Contact contact) {
-//            ListIterator<Contact> iterator = mContactList.listIterator();
-//            while (iterator.hasNext()) {
-//                Contact next = iterator.next();
-//                if (next.equals(contact)) {
-//                    iterator.set(contact);
-//
-//                }
-//            }
-//            mContactAD.notifyDataSetChanged();
-//        }
-//
-//        @Override
-//        public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
-//            Log.d(TAG, "onPresenceChanged: "+contact.getFirstName()+"  "+rainbowPresence.getPresence());
-//        }
-//
-//        @Override
-//        public void onActionInProgress(boolean b) {
-//
-//        }
-//    };
+    private Contact.ContactListener m_contactListener= new Contact.ContactListener(){
+
+        @Override
+        public void contactUpdated(Contact contact) {
+
+
+        }
+
+        @Override
+        public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
+            Log.d(TAG, "onPresenceChanged: "+contact.getFirstName()+"  "+rainbowPresence.getPresence());
+        }
+
+        @Override
+        public void onActionInProgress(boolean b) {
+
+        }
+    };
 
     private IRainbowSentInvitationListener mAddContactListener= new IRainbowSentInvitationListener(){
 
@@ -110,6 +106,8 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
 
         Bundle data = getIntent().getExtras();
         mContact = (ContactData)data.getParcelable("ContactData");
+        Contact currentContact=new Contact();
+        currentContact.notifyContactUpdated();
         boolean isRoster = Boolean.valueOf(mContact.isRoster);
 
         fullName.setText(mContact.fullName);
@@ -177,7 +175,7 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
             linearLayout.addView(invitationLayout);
         /**
          * for testing till isRoster bug fixed !
-**/
+
         if( mContact.emailAddresses.get(0).toString().equals("mabedalkareem@asaltech.com")){
             invitationLabel.setText("Remove Contact from my Network");
             invitationLabel.setTextColor(getResources().getColor(R.color.red));
@@ -326,9 +324,6 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
         String mainEmail=mContact.emailAddresses.get(0);
         String id= mContact.corporateId;
         String jid=mContact.jId;
-        Log.d(TAG, "onClick: "+ mainEmail);
-        Log.d(TAG, "onclick :"+ id);
-        Log.d(TAG, "onclick :jid "+ jid);
         switch(view.getId()){
             case R.id.removeContact:
                RainbowSdk.instance().contacts().removeContactFromRoster(jid,mainEmail,mRemoveContactListener);

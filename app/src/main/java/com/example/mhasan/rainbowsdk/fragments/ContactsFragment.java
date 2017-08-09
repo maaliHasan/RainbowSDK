@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.EmailAddress;
 import com.ale.infra.contact.RainbowPresence;
@@ -26,25 +28,26 @@ import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.activites.ContactData;
 import com.example.mhasan.rainbowsdk.activites.ContactDetails;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
+
 import java.util.ArrayList;
 import java.util.ListIterator;
 
 import static android.R.id.list;
+import static com.ale.rainbowsdk.RainbowSdk.instance;
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
 
 
 /**
  * Created by mhasan on 7/20/2017.
- *
  */
 
-public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener  {
+public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener {
     public static final String TAG = ContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
     private ContactsAdapter mContactAD;
     ArrayList<Contact> mContactList;
     private ProgressDialog pDialog;
-    private Contact.ContactListener m_contactListener= new Contact.ContactListener(){
+    private Contact.ContactListener m_contactListener = new Contact.ContactListener() {
 
         @Override
         public void contactUpdated(Contact contact) {
@@ -61,7 +64,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
         @Override
         public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
-            Log.d(TAG, "onPresenceChanged: "+contact.getFirstName()+"  "+rainbowPresence.getPresence());
+            Log.d(TAG, "onPresenceChanged: " + contact.getFirstName() + "  " + rainbowPresence.getPresence());
         }
 
         @Override
@@ -79,7 +82,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
                 }
             });
             mContactList.clear();
-            ArrayItemList arrayItemList = RainbowSdk.instance().contacts().getRainbowContacts();
+            ArrayItemList arrayItemList = instance().contacts().getRainbowContacts();
             int size = arrayItemList.getCount();
             for (int i = 0; i < size; i++) {
                 Contact contact = (Contact) arrayItemList.get(i);
@@ -103,7 +106,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadDialog();
-        RainbowSdk.instance().contacts().getRainbowContacts().registerChangeListener(m_changeListener);
+        instance().contacts().getRainbowContacts().registerChangeListener(m_changeListener);
         mContactRV = getActivity().findViewById(contactList);
         mContactAD = new ContactsAdapter(getActivity(), mContactList);
         mContactAD.setOnItemClickedListener(this);
@@ -113,7 +116,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
     @Override
     public void onDestroyView() {
-        RainbowSdk.instance().contacts().getRainbowContacts().unregisterChangeListener(m_changeListener);
+        instance().contacts().getRainbowContacts().unregisterChangeListener(m_changeListener);
         super.onDestroyView();
     }
 
@@ -127,29 +130,35 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
     @Override
     public void onItemClicked(int position) {
-
-        final String corporateId=mContactList.get(position).getCorporateId();
-        RainbowSdk.instance().contacts().getUserDataFromId(corporateId, new IUserProxy.IGetUserDataListener() {
-            @Override
-            public void onSuccess(Contact contact) {
-                getContactDetails(contact);
-            }
-            @Override
-            public void onFailure(RainbowServiceException exception) {
-
-            }
-        });
+        final String corporateId = mContactList.get(position).getCorporateId();
+        Contact currentContact = (Contact) RainbowSdk.instance().contacts().getContactFromId(corporateId);
+        if(currentContact.isBot()){
+            Toast.makeText(getContext(),"This  is Bot Contact !",Toast.LENGTH_LONG).show();
+        }
+        getContactDetails(currentContact);
+//        RainbowSdk.instance().contacts().getUserDataFromId(corporateId, new IUserProxy.IGetUserDataListener() {
+//            @Override
+//            public void onSuccess(Contact contact) {
+//                getContactDetails(contact);
+//            }
+//
+//            @Override
+//            public void onFailure(RainbowServiceException exception) {
+//
+//            }
+//        });
     }
-    public  void  getContactDetails(Contact contact){
+
+    public void getContactDetails(Contact contact) {
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
-        String id= contact.getCorporateId();
-        String jId=contact.getContactId();
+        String id = contact.getCorporateId();
+        String jId = contact.getContactId();
         String workEmail = contact.getEmailAddressForType(EmailAddress.EmailType.WORK);
         String homeEmail = contact.getEmailAddressForType(EmailAddress.EmailType.HOME);
-        String OfficePhone=contact.getFirstAvailableNumber();
-        String MobilePhone=contact.getFirstMobilePhoneNumber();
-        String isRoster=String.valueOf(contact.isRoster());
+        String OfficePhone = contact.getFirstAvailableNumber();
+        String MobilePhone = contact.getFirstMobilePhoneNumber();
+        String isRoster = String.valueOf(contact.isRoster());
         if (!workEmail.isEmpty()) {
             contactEmails.add(workEmail);
         }
@@ -167,7 +176,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
-        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id ,jId));
+        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails, contactPhones, isRoster, id, jId));
         startActivity(intent);
     }
 
