@@ -3,8 +3,10 @@ package com.example.mhasan.rainbowsdk.fragments;
 import android.support.v4.app.Fragment;
 
 /**
- * Created by mhasan on 8/8/2017.
+ * Created by mhasan on 7/20/2017.
+ *
  */
 
-public class SettingsFragment extends Fragment {
+public class ConversationsFragment extends Fragment {
+
 }

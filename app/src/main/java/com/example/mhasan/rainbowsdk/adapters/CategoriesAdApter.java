@@ -2,41 +2,43 @@ package com.example.mhasan.rainbowsdk.adapters;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.ale.infra.manager.Conversation;
 import com.example.mhasan.rainbowsdk.fragments.ContactsFragment;
+import com.example.mhasan.rainbowsdk.fragments.ConversationsFragment;
 import com.example.mhasan.rainbowsdk.fragments.RainbowContactsFragment;
-import com.example.mhasan.rainbowsdk.fragments.SettingsFragment;
 
 /**
  * Created by mhasan on 7/20/2017.
  *
  */
 
-public class CategoriesAdApter extends FragmentPagerAdapter {
+public class CategoriesAdApter extends FragmentStatePagerAdapter {
     private Context mContex;
-    public CategoriesAdApter(Context context,FragmentManager fm) {
-        super(fm);
-        mContex=context;
 
+    public CategoriesAdApter(FragmentManager fm, Context mContex) {
+        super(fm);
+        this.mContex = mContex;
     }
 
     @Override
     public Fragment getItem(int position) {
-      switch (position){
-          case 0:
-              return new ContactsFragment();
-          case 1:
-              return new RainbowContactsFragment();
-          case 2:
-              return new SettingsFragment();
-      }
+        switch (position){
+            case 0:
+                return new ContactsFragment();
+            case 1:
+                return new RainbowContactsFragment();
+//            case 2:
+//                return new ConversationsFragment();
+        }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -45,11 +47,16 @@ public class CategoriesAdApter extends FragmentPagerAdapter {
             case 0:
                 return "Contacts" ;
             case 1:
-                return "Conversation";
-            case 2:
                 return "ALL Contacts";
+            case 2:
+                return "Conversation";
+
 
         }
         return null;
     }
 }
+
+
+
+

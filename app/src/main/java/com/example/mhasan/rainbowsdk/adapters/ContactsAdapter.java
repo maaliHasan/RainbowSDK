@@ -26,8 +26,8 @@ import static com.example.mhasan.rainbowsdk.R.id.contactList;
  *
  */
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder>  {
-    public static final String TAG=ContactsAdapter.class.getSimpleName();
+public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder> {
+    public static final String TAG = ContactsAdapter.class.getSimpleName();
     ArrayList<Contact> contactList;
     private LayoutInflater inflater;
     private Context mContext;
@@ -72,27 +72,22 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
         } else {
             holder.userIcon.setImageResource(R.drawable.ic_add_user);
         }
-        if(currentContact.getPresence().isOnline() ){
+        if (currentContact.getPresence().isOnline()) {
             holder.contactPresence.setText("Online");
             holder.status.setImageResource(R.drawable.ic_online);
-        }
-        else if( currentContact.getPresence().isMobileOnline()){
+        } else if (currentContact.getPresence().isMobileOnline()) {
             holder.contactPresence.setText("Online On mobile");
             holder.status.setImageResource(R.drawable.ic_online);
-        }
-        else if(currentContact.getPresence().isAway()){
+        } else if (currentContact.getPresence().isAway()) {
             holder.contactPresence.setText("Away");
             holder.status.setImageResource(R.drawable.ic_away);
-        }
-        else if(currentContact.getPresence().isOffline()){
+        } else if (currentContact.getPresence().isOffline()) {
             holder.contactPresence.setText("Offline");
             holder.status.setImageResource(R.drawable.ic_offline);
-        }
-        else if(currentContact.getPresence().getPresence().equals("DoNotDisturb")){
+        } else if (currentContact.getPresence().getPresence().equals("DoNotDisturb")) {
             holder.contactPresence.setText("Do not disturb");
             holder.status.setImageResource(R.drawable.ic_not_distrub);
-        }
-        else {
+        } else {
             holder.contactPresence.setText("Offline");
             holder.status.setImageResource(R.drawable.ic_offline);
         }
@@ -116,8 +111,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
         public dataHolder(View itemView) {
             super(itemView);
             fullName = itemView.findViewById(R.id.fullName);
-            status=itemView.findViewById(R.id.status);
-            contactPresence=itemView.findViewById(R.id.contactPresence);
+            status = itemView.findViewById(R.id.status);
+            contactPresence = itemView.findViewById(R.id.contactPresence);
             profilePic = itemView.findViewById(R.id.profile_pic);
             userIcon = itemView.findViewById(R.id.contactIcon);
             userIcon.setOnClickListener(this);

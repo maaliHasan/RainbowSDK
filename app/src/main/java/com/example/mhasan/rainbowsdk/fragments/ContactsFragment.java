@@ -28,6 +28,7 @@ import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.activites.ContactData;
 import com.example.mhasan.rainbowsdk.activites.ContactDetails;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -35,6 +36,7 @@ import java.util.ListIterator;
 import static android.R.id.list;
 import static com.ale.rainbowsdk.RainbowSdk.instance;
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
+import static com.neovisionaries.i18n.LanguageCode.lo;
 
 
 /**
@@ -59,7 +61,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
                 }
             }
-            mContactAD.notifyDataSetChanged();
+//            mContactAD.notifyDataSetChanged();
         }
 
         @Override
