@@ -62,7 +62,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.example.mhasan.rainbowsdk.R.id.status;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener  {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String TAG = MainActivity.class.getSimpleName();
     private String mUserName;
     private String mEmail;
@@ -92,10 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
-            mUpdatedConnectedContact= new Contact();
-            mUpdatedConnectedContact=(Contact) RainbowSdk.instance().myProfile().getConnectedUser();
-            Log.d(TAG, "onPresenceChanged: "+mUpdatedConnectedContact.getFirstName()+" "+mUpdatedConnectedContact.getPresence().getPresence());
-
+            mUpdatedConnectedContact = new Contact();
+            mUpdatedConnectedContact = (Contact) RainbowSdk.instance().myProfile().getConnectedUser();
+            Log.d(TAG, "onPresenceChanged: " + mUpdatedConnectedContact.getFirstName() + " " + mUpdatedConnectedContact.getPresence().getPresence());
+            updateAdapter();
         }
 
         @Override
@@ -130,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         connectToRainbow();
 
 
-
         mRelativeLayout = (RelativeLayout) findViewById(R.id.viewPagerLayout);
         mFragmentsContent = (RelativeLayout) findViewById(R.id.fragmentsContent);
 //        mDrawerList = (ListView) findViewById(R.id.navList);
@@ -138,12 +137,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         mHeaderLayout = navigationView.getHeaderView(0);
-        mNameText =  mHeaderLayout.findViewById(R.id.username);
-        mEmailText =  mHeaderLayout.findViewById(R.id.email);
-        mPresence =  mHeaderLayout.findViewById(R.id.presence);
-        mProfilePic=mHeaderLayout.findViewById(R.id.profile_image);
-        mPresenceIcon=mHeaderLayout.findViewById(status);
-        mViewPresence=mHeaderLayout.findViewById(R.id.view_more);
+        mNameText = mHeaderLayout.findViewById(R.id.username);
+        mEmailText = mHeaderLayout.findViewById(R.id.email);
+        mPresence = mHeaderLayout.findViewById(R.id.presence);
+        mProfilePic = mHeaderLayout.findViewById(R.id.profile_image);
+        mPresenceIcon = mHeaderLayout.findViewById(status);
+        mViewPresence = mHeaderLayout.findViewById(R.id.view_more);
         mViewPresence.setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
@@ -262,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if(menu instanceof MenuBuilder){
+        if (menu instanceof MenuBuilder) {
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
         }
@@ -372,48 +371,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getConnectedUserInfo() {
-        mConnectedContact= new Contact();
+        mConnectedContact = new Contact();
         mConnectedContact = (Contact) RainbowSdk.instance().myProfile().getConnectedUser();
         mConnectedContact.registerChangeListener(m_contactListener);
         Log.d(TAG, "onItemClick: " + mConnectedContact.getFirstName());
-//        mConnectedContact.registerChangeListener(m_contactListener);
-//        mUserName = mConnectedContact.getFirstName() + " " + mConnectedContact.getLastName();
-//        mEmail = mConnectedContact.getLoginEmail();
-//        mUserPresence = mConnectedContact.getPresence().getPresence();
-//        mUserPic=mConnectedContact.getPhoto();
-//        Log.d(TAG, "onItemClick: " + mConnectedContact.getFirstName());
-        //updateConnectedUserInfo();
-
     }
 
-    private void updateConnectedUserInfo(Contact contact){
-
+    private void updateConnectedUserInfo(Contact contact) {
+        Log.d(TAG, "updateConnectedUserInfo: " + mUpdatedConnectedContact.getPresence().getPresence());
         mUserName = contact.getFirstName() + " " + contact.getLastName();
-        Log.d(TAG, "updateConnectedUserInfo: "+contact.getFirstName()+ " "+contact.getPresence());
+        Log.d(TAG, "updateConnectedUserInfo: " + contact.getFirstName() + " " + contact.getPresence());
         mEmail = contact.getLoginEmail();
         mUserPresence = contact.getPresence().getPresence();
-        mUserPic=contact.getPhoto();
+        mUserPic = contact.getPhoto();
         mNameText.setText(mUserName);
         mEmailText.setText(mEmail);
         if ((contact.getPhoto()) != null) {
             mProfilePic.setImageBitmap(mUserPic);
-        }else{
+        } else {
             mProfilePic.setImageResource(R.drawable.ic_placeholder);
         }
 
         if (contact.getPresence().isOnline() || contact.getPresence().isMobileOnline()) {
             mPresence.setText("Online");
             mPresenceIcon.setImageResource(R.drawable.ic_online);
-        } else if (contact.getPresence().isAway()|| contact.getPresence().isManualAway()) {
+        } else if (contact.getPresence().isAway() || contact.getPresence().isManualAway()) {
             mPresence.setText("Away");
             mPresenceIcon.setImageResource(R.drawable.ic_away);
-        } else if (contact.getPresence().isOffline() || contact.getPresence().isManualAway() || contact.getPresence().isUnsubscribed()) {
+        } else if (contact.getPresence().isBusy() || contact.getPresence().isManualAway() || contact.getPresence().isUnsubscribed()) {
             mPresence.setText("Offline");
             mPresenceIcon.setImageResource(R.drawable.ic_offline);
         } else if (contact.getPresence().getPresence().equals("DoNotDisturb")) {
             mPresence.setText("Do not disturb");
             mPresenceIcon.setImageResource(R.drawable.ic_not_distrub);
-        }else{
+        } else {
             mPresence.setText("Offline");
             mPresenceIcon.setImageResource(R.drawable.ic_offline);
         }
@@ -423,42 +414,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        switch (id){
+        switch (id) {
             case R.id.view_more:
-                PopupMenu popupMenu= new PopupMenu(this,mViewPresence);
-                popupMenu.getMenuInflater().inflate(R.menu.popup_menu,popupMenu.getMenu());
+                PopupMenu popupMenu = new PopupMenu(this, mViewPresence);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        String presence= (String) item.getTitle();
-                        switch (presence){
-                            case"Offline":
+                        String presence = (String) item.getTitle();
+                        switch (presence) {
+                            case "Offline":
                                 RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.OFFLINE);
-                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                updateAdapter();
                                 break;
-                            case"Online":
+                            case "Online":
                                 RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.ONLINE);
-                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                updateAdapter();
                                 break;
-                            case"Away":
+                            case "Away":
                                 RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.AWAY);
-                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                updateAdapter();
                                 break;
-                            case"Do not disturb":
+                            case "Do not disturb":
                                 RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.DND);
-                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                updateAdapter();
                                 break;
 
                         }
-                        updateConnectedUserInfo(mUpdatedConnectedContact);
-
-                      //  Toast.makeText(MainActivity.this,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
+                        updateAdapter();
                         return true;
                     }
                 });
                 popupMenu.show();
                 break;
         }
+
+    }
+
+    private void updateAdapter() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateConnectedUserInfo(mUpdatedConnectedContact);
+
+            }
+        });
+
 
     }
 

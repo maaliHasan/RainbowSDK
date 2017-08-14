@@ -34,6 +34,7 @@ import static com.neovisionaries.i18n.LanguageCode.cu;
  */
 
 public class ContactDetails extends AppCompatActivity  implements View.OnClickListener{
+    private Boolean isInvitationSent=false;
     ContactData mContact;
     public static final String TAG= ContactDetails.class.getSimpleName();
     private Contact.ContactListener m_contactListener= new Contact.ContactListener(){
@@ -59,6 +60,7 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
 
         @Override
         public void onInvitationSentSuccess(String s) {
+            isInvitationSent=true;
             Log.d(TAG, "onInvitationSentSuccess: "+s);
         }
 
@@ -106,12 +108,16 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
 
         Bundle data = getIntent().getExtras();
         mContact = (ContactData)data.getParcelable("ContactData");
+        Contact contact = (Contact) RainbowSdk.instance().contacts().getContactFromCorporateId(mContact.corporateId);
+        Log.d(TAG, "getContactData: "+contact.isInvited());
         Contact currentContact=new Contact();
         currentContact.notifyContactUpdated();
         boolean isRoster = Boolean.valueOf(mContact.isRoster);
 
         fullName.setText(mContact.fullName);
         jobTitle.setText(mContact.jobTitle);
+        //String userPresence=mContact.presence;
+
         presence.setText(mContact.presence);
         if ((mContact.profilePic) != null) {
             pic.setImageBitmap(mContact.profilePic);
@@ -144,6 +150,8 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
             RelativeLayout.LayoutParams inDividerParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 1);
             inDividerParams.addRule(RelativeLayout.BELOW, invitationLabel.getId());
             inDividerParams.setMargins(0, 20, 0, 10);
+
+
 
         if (!isRoster) {
             invitationLabel.setText("Add Contact to my Network");

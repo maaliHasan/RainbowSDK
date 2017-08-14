@@ -62,7 +62,8 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
                 }
             }
-//            mContactAD.notifyDataSetChanged();
+            updateAdapter();
+
         }
 
         @Override
@@ -134,7 +135,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     @Override
     public void onItemClicked(int position) {
         final String corporateId = mContactList.get(position).getCorporateId();
-        Contact currentContact = (Contact) RainbowSdk.instance().contacts().getContactFromId(corporateId);
+        Contact currentContact = (Contact) RainbowSdk.instance().contacts().getContactFromCorporateId(corporateId);
         if(currentContact.isBot()){
             Toast.makeText(getContext(),"This  is Bot Contact !",Toast.LENGTH_LONG).show();
         }
@@ -181,6 +182,18 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         Intent intent = new Intent(getActivity(), ContactDetails.class);
         intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails, contactPhones, isRoster, id, jId));
         startActivity(intent);
+    }
+
+    private void updateAdapter(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mContactAD.notifyDataSetChanged();
+
+            }
+        });
+
+
     }
 
 
