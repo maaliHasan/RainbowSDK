@@ -3,6 +3,7 @@ package com.example.mhasan.rainbowsdk.activites;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -19,12 +20,16 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,27 +45,66 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ale.infra.contact.Contact;
+import com.ale.infra.contact.RainbowPresence;
 import com.ale.listener.SigninResponseListener;
 import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.adapters.CategoriesAdApter;
+import com.example.mhasan.rainbowsdk.adapters.DirectoryContactsAdapter;
 import com.example.mhasan.rainbowsdk.fragments.DirectoryContactsFragment;
 
 
+import java.lang.reflect.Field;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.mhasan.rainbowsdk.R.id.status;
 
-public class MainActivity extends AppCompatActivity {
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener  {
     public static final String TAG = MainActivity.class.getSimpleName();
+    private String mUserName;
+    private String mEmail;
+    private String mUserPresence;
     private RelativeLayout mRelativeLayout;
     private RelativeLayout mFragmentsContent;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView navigationView;
-    private Contact[] mConnectedUser;
+    private View mHeaderLayout;
+    private TextView mNameText;
+    private TextView mEmailText;
+    private TextView mPresence;
+    private CircleImageView mProfilePic;
+    private CircleImageView mPresenceIcon;
+    private ImageView mViewPresence;
+    private Bitmap mUserPic;
+    private Contact mConnectedContact;
+    private Contact mUpdatedConnectedContact;
+    private Contact.ContactListener m_contactListener = new Contact.ContactListener() {
+
+        @Override
+        public void contactUpdated(Contact contact) {
+
+        }
+
+        @Override
+        public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
+            mUpdatedConnectedContact= new Contact();
+            mUpdatedConnectedContact=(Contact) RainbowSdk.instance().myProfile().getConnectedUser();
+            Log.d(TAG, "onPresenceChanged: "+mUpdatedConnectedContact.getFirstName()+" "+mUpdatedConnectedContact.getPresence().getPresence());
+
+        }
+
+        @Override
+        public void onActionInProgress(boolean b) {
+
+        }
+    };
+
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -85,13 +129,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         connectToRainbow();
 
-        mConnectedUser = new Contact[0];
+
+
         mRelativeLayout = (RelativeLayout) findViewById(R.id.viewPagerLayout);
         mFragmentsContent = (RelativeLayout) findViewById(R.id.fragmentsContent);
 //        mDrawerList = (ListView) findViewById(R.id.navList);
 
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mHeaderLayout = navigationView.getHeaderView(0);
+        mNameText =  mHeaderLayout.findViewById(R.id.username);
+        mEmailText =  mHeaderLayout.findViewById(R.id.email);
+        mPresence =  mHeaderLayout.findViewById(R.id.presence);
+        mProfilePic=mHeaderLayout.findViewById(R.id.profile_image);
+        mPresenceIcon=mHeaderLayout.findViewById(status);
+        mViewPresence=mHeaderLayout.findViewById(R.id.view_more);
+        mViewPresence.setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
             @Override
@@ -116,10 +169,6 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     // For rest of the options we just show a toast on click
-
-                    case R.id.starred:
-                        Toast.makeText(getApplicationContext(), "Stared Selected", Toast.LENGTH_SHORT).show();
-                        return true;
                     case R.id.sent_mail:
                         Toast.makeText(getApplicationContext(), "Send Selected", Toast.LENGTH_SHORT).show();
                         return true;
@@ -132,8 +181,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.trash:
                         Toast.makeText(getApplicationContext(), "Trash Selected", Toast.LENGTH_SHORT).show();
                         return true;
-                    case R.id.spam:
-                        Toast.makeText(getApplicationContext(), "Spam Selected", Toast.LENGTH_SHORT).show();
+                    case R.id.logout:
+                        Toast.makeText(getApplicationContext(), "logOut Selected", Toast.LENGTH_SHORT).show();
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
@@ -147,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, mDrawerLayout, R.string.openDrawer, R.string.closeDrawer) {
             @Override
             public void onDrawerOpened(View drawerView) {
+                updateConnectedUserInfo(mConnectedContact);
                 super.onDrawerOpened(drawerView);
             }
 
@@ -167,12 +217,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-       // getSupportActionBar().setHomeButtonEnabled(true);
+        // getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-       // getSupportActionBar().setDisplayShowCustomEnabled(true);
+        // getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        addDrawerItems();
-//        setupDrawer();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -196,41 +244,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    public void addDrawerItems() {
-//
-//        String[] osArray = {"User Information", "String 1", "String 1", "String 1"};
-//       // getConnectedUser();
-//        ArrayAdapter<String> mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, osArray);
-//        //  mConnectedUser[0]=ConnectedContact;
-//          DrawerItemCustomAdapter customAdapter =new  DrawerItemCustomAdapter(this, R.layout.activity_connected_contact_deatails, osArray);
-//        mDrawerList.setAdapter(mAdapter);
-//        mDrawerList.setOnItemClickListener(this);
-//    }
-
-//    private void getConnectedUser() {
-//        Contact ConnectedContact = (Contact) RainbowSdk.instance().myProfile().getConnectedUser();
-//    }
-
-//    @RequiresApi(api = Build.VERSION_CODES.M)
-//    private void setupDrawer() {
-//        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
-//            /** Call when a drawer has settled in a completely open state. */
-//            public void onDrawerOpened(View drawerView) {
-//                super.onDrawerOpened(drawerView);
-//                //  getSupportActionBar().setTitle("Navigation!");
-//                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-//            }
-//
-//            /** Called when a drawer has settled in a completely closed state. */
-//            public void onDrawerClosed(View view) {
-//                super.onDrawerClosed(view);
-//                invalidateOptionsMenu();
-//            }
-//        };
-//        int tabIconColor = ContextCompat.getColor(this, black);
-//        mDrawerToggle.getDrawerArrowDrawable().setColor(tabIconColor);
-//        mDrawerLayout.addDrawerListener(mDrawerToggle);
-//    }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -249,7 +262,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -283,41 +299,13 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return actionBarDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
 
     }
-
-    //    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Pass the event to ActionBarDrawerToggle, if it returns
-//        // true, then it has handled the app icon touch event
-//        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-//
-//    }
-
-//    @Override
-//    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//        selectItem(position);
-//
-//    }
-
-//    private void selectItem(int position) {
-//        switch (position) {
-//            case 0:
-//                Contact ConnectedContact = (Contact) RainbowSdk.instance().myProfile().getConnectedUser();
-//                Log.d(TAG, "onItemClick: " + ConnectedContact.getFirstName());
-//                Toast.makeText(getBaseContext(), "Time for an upgrade!", Toast.LENGTH_LONG).show();
-//                break;
-//            default:
-//                break;
-//        }
-//
-//
-//    }
 
 
     /**
@@ -345,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
                         // You are now connected
                         // Do something on the thread UI
                         Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
+                        getConnectedUserInfo();
 
                     }
 
@@ -364,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -381,6 +371,96 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void getConnectedUserInfo() {
+        mConnectedContact= new Contact();
+        mConnectedContact = (Contact) RainbowSdk.instance().myProfile().getConnectedUser();
+        mConnectedContact.registerChangeListener(m_contactListener);
+        Log.d(TAG, "onItemClick: " + mConnectedContact.getFirstName());
+//        mConnectedContact.registerChangeListener(m_contactListener);
+//        mUserName = mConnectedContact.getFirstName() + " " + mConnectedContact.getLastName();
+//        mEmail = mConnectedContact.getLoginEmail();
+//        mUserPresence = mConnectedContact.getPresence().getPresence();
+//        mUserPic=mConnectedContact.getPhoto();
+//        Log.d(TAG, "onItemClick: " + mConnectedContact.getFirstName());
+        //updateConnectedUserInfo();
+
+    }
+
+    private void updateConnectedUserInfo(Contact contact){
+
+        mUserName = contact.getFirstName() + " " + contact.getLastName();
+        Log.d(TAG, "updateConnectedUserInfo: "+contact.getFirstName()+ " "+contact.getPresence());
+        mEmail = contact.getLoginEmail();
+        mUserPresence = contact.getPresence().getPresence();
+        mUserPic=contact.getPhoto();
+        mNameText.setText(mUserName);
+        mEmailText.setText(mEmail);
+        if ((contact.getPhoto()) != null) {
+            mProfilePic.setImageBitmap(mUserPic);
+        }else{
+            mProfilePic.setImageResource(R.drawable.ic_placeholder);
+        }
+
+        if (contact.getPresence().isOnline() || contact.getPresence().isMobileOnline()) {
+            mPresence.setText("Online");
+            mPresenceIcon.setImageResource(R.drawable.ic_online);
+        } else if (contact.getPresence().isAway()|| contact.getPresence().isManualAway()) {
+            mPresence.setText("Away");
+            mPresenceIcon.setImageResource(R.drawable.ic_away);
+        } else if (contact.getPresence().isOffline() || contact.getPresence().isManualAway() || contact.getPresence().isUnsubscribed()) {
+            mPresence.setText("Offline");
+            mPresenceIcon.setImageResource(R.drawable.ic_offline);
+        } else if (contact.getPresence().getPresence().equals("DoNotDisturb")) {
+            mPresence.setText("Do not disturb");
+            mPresenceIcon.setImageResource(R.drawable.ic_not_distrub);
+        }else{
+            mPresence.setText("Offline");
+            mPresenceIcon.setImageResource(R.drawable.ic_offline);
+        }
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id){
+            case R.id.view_more:
+                PopupMenu popupMenu= new PopupMenu(this,mViewPresence);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu,popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        String presence= (String) item.getTitle();
+                        switch (presence){
+                            case"Offline":
+                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.OFFLINE);
+                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                break;
+                            case"Online":
+                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.ONLINE);
+                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                break;
+                            case"Away":
+                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.AWAY);
+                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                break;
+                            case"Do not disturb":
+                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.DND);
+                                updateConnectedUserInfo(mUpdatedConnectedContact);
+                                break;
+
+                        }
+                        updateConnectedUserInfo(mUpdatedConnectedContact);
+
+                      //  Toast.makeText(MainActivity.this,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                });
+                popupMenu.show();
+                break;
+        }
+
+    }
 
 
 }

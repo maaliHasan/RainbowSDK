@@ -1,0 +1,39 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.mhasan.rainbowsdk.activites.MainActivity">
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="always">
+
+            <item
+                android:id="@+id/online"
+                android:checked="false"
+                android:title="@string/online"
+                android:icon="@drawable/ic_online"
+                />
+            <item
+                android:id="@+id/offline"
+                android:checked="false"
+                android:icon="@drawable/ic_offline"
+                android:title="@string/offline" />
+            <item
+                android:id="@+id/away"
+                android:checked="false"
+                android:icon="@drawable/ic_away"
+                android:title="@string/away" />
+            <item
+                android:id="@+id/donotdist"
+                android:checked="false"
+                android:icon="@drawable/ic_not_distrub"
+                android:title="@string/donotdist" />
+
+    </item>
+
+
+</menu>
+
+
+

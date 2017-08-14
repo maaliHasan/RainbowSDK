@@ -41,6 +41,7 @@ import static com.neovisionaries.i18n.LanguageCode.lo;
 
 /**
  * Created by mhasan on 7/20/2017.
+ *
  */
 
 public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener {

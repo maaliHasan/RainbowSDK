@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="190dp"
-    android:background="@drawable/background_material"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     >
 
@@ -13,38 +13,72 @@
     android:id="@+id/profile_image"
         android:layout_width="76dp"
     android:layout_height="76dp"
-    android:src="@drawable/profile"
-        android:layout_marginLeft="24dp"
-        android:layout_centerVertical="true"
+    android:src="@drawable/ic_placeholder"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_alignTop="@+id/username"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="24dp" />
+        android:layout_alignParentStart="true" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/status"
+        app:civ_border_color="#EEEEEE"
+        app:civ_border_width="2dp"
+        android:background="@drawable/status_text"
+        android:layout_alignBottom="@+id/profile_image"
+        android:layout_alignRight="@+id/profile_image"
+        android:layout_alignEnd="@+id/profile_image" />
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Akash Bangad"
+        android:text="Maali "
         android:textSize="14sp"
-        android:textColor="#FFF"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:gravity="left"
         android:paddingBottom="4dp"
         android:id="@+id/username"
-        android:layout_above="@+id/email"
-        android:layout_alignLeft="@+id/profile_image"
-        android:layout_alignStart="@+id/profile_image" />
+        android:layout_toRightOf="@+id/profile_image"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Akash.bangad93@gmail.com"
+        android:text="maali@gmail.com"
         android:id="@+id/email"
         android:gravity="left"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="15dp"
         android:textSize="14sp"
-        android:textColor="#fff"
-        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:layout_below="@+id/username"
         android:layout_alignLeft="@+id/username"
         android:layout_alignStart="@+id/username" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Online"
+        android:id="@+id/presence"
+        android:gravity="left"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:layout_alignBottom="@+id/profile_image"
+        android:layout_alignLeft="@+id/email"
+        android:layout_alignStart="@+id/email" />
+    <ImageView
+        android:id="@+id/view_more"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:background="@drawable/ic_view_more"
+        android:layout_alignTop="@+id/presence"
+        android:layout_toRightOf="@+id/presence"
+        android:layout_toEndOf="@+id/presence" />
 
 </RelativeLayout>
