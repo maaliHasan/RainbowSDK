@@ -45,7 +45,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ale.infra.contact.Contact;
+import com.ale.infra.contact.IRainbowContact;
 import com.ale.infra.contact.RainbowPresence;
+import com.ale.infra.list.ArrayItemList;
 import com.ale.listener.SigninResponseListener;
 import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
@@ -56,9 +58,12 @@ import com.example.mhasan.rainbowsdk.fragments.DirectoryContactsFragment;
 
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.ale.rainbowsdk.RainbowSdk.instance;
 import static com.example.mhasan.rainbowsdk.R.id.status;
 
 
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
             mUpdatedConnectedContact = new Contact();
-            mUpdatedConnectedContact = (Contact) RainbowSdk.instance().myProfile().getConnectedUser();
+            mUpdatedConnectedContact = (Contact) instance().myProfile().getConnectedUser();
             Log.d(TAG, "onPresenceChanged: " + mUpdatedConnectedContact.getFirstName() + " " + mUpdatedConnectedContact.getPresence().getPresence());
             updateAdapter();
         }
@@ -181,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(getApplicationContext(), "Trash Selected", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.logout:
+                        getPendingSentInvitations();
                         Toast.makeText(getApplicationContext(), "logOut Selected", Toast.LENGTH_SHORT).show();
                         return true;
                     default:
@@ -280,8 +286,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mFragmentsContent.setVisibility(View.VISIBLE);
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                DirectoryContactsFragment DContactFatagment = new DirectoryContactsFragment();
-                fragmentTransaction.add(R.id.fragmentsContent, DContactFatagment);
+                DirectoryContactsFragment DContactFaragment = new DirectoryContactsFragment();
+                fragmentTransaction.add(R.id.fragmentsContent, DContactFaragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 return false;
@@ -313,20 +319,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
 
     public void connectToRainbow() {
-        RainbowSdk.instance().setNotificationBuilder(getApplicationContext(), MainActivity.class,
+        instance().setNotificationBuilder(getApplicationContext(), MainActivity.class,
                 0, // You can set it to 0 if you have no app icon
                 getString(R.string.app_name),
                 "Connect to the app",
                 Color.RED);
-        if (!RainbowSdk.instance().isInitialized()) {
-            RainbowSdk.instance().initialize(); // Will change in the future
+        if (!instance().isInitialized()) {
+            instance().initialize(); // Will change in the future
         }
 
 
-        RainbowSdk.instance().connection().start(new StartResponseListener() {
+        instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                RainbowSdk.instance().connection().signin("mhasan@asaltech.com", "Asal@123", new SigninResponseListener() {
+                instance().connection().signin("abzour@asaltech.com", "Asal@123", new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected
@@ -355,12 +361,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        // super.onBackPressed();
         int fragmentsCount = getSupportFragmentManager().getBackStackEntryCount();
         if (fragmentsCount > 0) {
             getSupportFragmentManager().popBackStack();
+            Log.d(TAG, "onBackPressed: "+fragmentsCount);
         } else {
-            super.onBackPressed();
+            // super.onBackPressed();
+            mFragmentsContent.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -372,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getConnectedUserInfo() {
         mConnectedContact = new Contact();
-        mConnectedContact = (Contact) RainbowSdk.instance().myProfile().getConnectedUser();
+        mConnectedContact = (Contact) instance().myProfile().getConnectedUser();
         mConnectedContact.registerChangeListener(m_contactListener);
         Log.d(TAG, "onItemClick: " + mConnectedContact.getFirstName());
     }
@@ -424,19 +433,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String presence = (String) item.getTitle();
                         switch (presence) {
                             case "Offline":
-                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.OFFLINE);
+                                instance().myProfile().setPresenceTo(RainbowPresence.OFFLINE);
                                 updateAdapter();
                                 break;
                             case "Online":
-                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.ONLINE);
+                                instance().myProfile().setPresenceTo(RainbowPresence.ONLINE);
                                 updateAdapter();
                                 break;
                             case "Away":
-                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.AWAY);
+                                instance().myProfile().setPresenceTo(RainbowPresence.AWAY);
                                 updateAdapter();
                                 break;
                             case "Do not disturb":
-                                RainbowSdk.instance().myProfile().setPresenceTo(RainbowPresence.DND);
+                                instance().myProfile().setPresenceTo(RainbowPresence.DND);
                                 updateAdapter();
                                 break;
 
@@ -460,6 +469,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+
+    }
+
+    void getPendingSentInvitations() {
+        List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
+        Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());
+        List<IRainbowContact> pendingReceivedInvitations = RainbowSdk.instance().contacts().getPendingReceivedInvitations();
+        Log.d(TAG, "getPendingReceivedInvitations: " + pendingReceivedInvitations.size());
+        ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
+        Log.d(TAG, "getReceivedInvitations: " + invitationSent.getCount());
+        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
+        Log.d(TAG, "getSentInvitations: "+sentInvitation);
 
     }
 

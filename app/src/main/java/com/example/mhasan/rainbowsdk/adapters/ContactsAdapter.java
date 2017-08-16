@@ -23,7 +23,6 @@ import static com.example.mhasan.rainbowsdk.R.id.contactList;
 
 /**
  * Created by mhasan on 7/20/2017.
- *
  */
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHolder> {
@@ -124,6 +123,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
 
         }
     }
+
 
     @Override
     public long getItemId(int position) {

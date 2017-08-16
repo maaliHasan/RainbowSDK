@@ -16,8 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.ale.infra.application.RainbowContext;
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.EmailAddress;
+import com.ale.infra.contact.IRainbowContact;
 import com.ale.infra.contact.RainbowPresence;
 import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
 import com.ale.infra.list.ArrayItemList;
@@ -28,13 +30,16 @@ import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.activites.ContactData;
 import com.example.mhasan.rainbowsdk.activites.ContactDetails;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
+import com.example.mhasan.rainbowsdk.adapters.PendingInvitationsAdapter;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 
 import static android.R.id.list;
 import static com.ale.rainbowsdk.RainbowSdk.instance;
+import static com.example.mhasan.rainbowsdk.R.id.PendingInvitationsList;
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
 import static com.neovisionaries.i18n.LanguageCode.lo;
 
@@ -44,12 +49,16 @@ import static com.neovisionaries.i18n.LanguageCode.lo;
  *
  */
 
-public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener {
+public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener ,IItemListChangeListener{
     public static final String TAG = ContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
+    private RecyclerView mPendingInvitationRV;
     private ContactsAdapter mContactAD;
+    private PendingInvitationsAdapter mPendingInvitationAD;
     ArrayList<Contact> mContactList;
+    List<IRainbowContact> mPendingInvitationList;
     private ProgressDialog pDialog;
+
     private Contact.ContactListener m_contactListener = new Contact.ContactListener() {
 
         @Override
@@ -112,7 +121,9 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         loadDialog();
         instance().contacts().getRainbowContacts().registerChangeListener(m_changeListener);
         mContactRV = getActivity().findViewById(contactList);
+        mPendingInvitationRV= getActivity().findViewById(PendingInvitationsList);
         mContactAD = new ContactsAdapter(getActivity(), mContactList);
+        mPendingInvitationAD = new PendingInvitationsAdapter(getActivity(), mPendingInvitationList);
         mContactAD.setOnItemClickedListener(this);
         mContactRV.setAdapter(mContactAD);
         mContactRV.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -154,6 +165,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     }
 
     public void getContactDetails(Contact contact) {
+     //   getPendingSentInvitations();
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
         String id = contact.getCorporateId();
@@ -192,9 +204,30 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
             }
         });
-
-
     }
 
+//    void getPendingSentInvitations() {
+//        List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
+//        Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());
+//        List<IRainbowContact> pendingReceivedInvitations = RainbowSdk.instance().contacts().getPendingReceivedInvitations();
+//        Log.d(TAG, "getPendingReceivedInvitations: " + pendingReceivedInvitations.size());
+//        ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
+//        Log.d(TAG, "getReceivedInvitations: " + invitationSent.getCount());
+//        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
+//        Log.d(TAG, "getSentInvitations: "+sentInvitation);
+//
+//    }
 
+
+    @Override
+    public void dataChanged() {
+        List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
+        Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());
+        List<IRainbowContact> pendingReceivedInvitations = RainbowSdk.instance().contacts().getPendingReceivedInvitations();
+        Log.d(TAG, "getPendingReceivedInvitations: " + pendingReceivedInvitations.size());
+        ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
+        Log.d(TAG, "getReceivedInvitations: " + invitationSent.getCount());
+        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
+        Log.d(TAG, "getSentInvitations: "+sentInvitation);
+    }
 }

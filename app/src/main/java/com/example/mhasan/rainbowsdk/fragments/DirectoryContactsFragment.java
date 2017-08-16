@@ -42,7 +42,7 @@ import java.util.List;
  */
 
 public class DirectoryContactsFragment extends Fragment implements DirectoryContactsAdapter.OnItemClickListener {
-    private final static String TAG=DirectoryContactsFragment.class.getSimpleName();
+    private final static String TAG = DirectoryContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
     private DirectoryContactsAdapter mContactAD;
     ArrayList<DirectoryContact> mContactList;
@@ -56,8 +56,8 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         @Override
         public void searchFinished(List<DirectoryContact> list) {
             mContactList.clear();
-            int size= list.size();
-            for(int i=0;i<size;i++){
+            int size = list.size();
+            for (int i = 0; i < size; i++) {
                 DirectoryContact contact = list.get(i);
                 mContactList.add(contact);
             }
@@ -89,7 +89,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContactRV = getActivity().findViewById(R.id.directoryContactList);
-        mContactAD=new DirectoryContactsAdapter(getContext(),mContactList);
+        mContactAD = new DirectoryContactsAdapter(getContext(), mContactList);
         mContactAD.setOnItemClickedListener(this);
         mContactRV.setAdapter(mContactAD);
         mContactRV.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -119,11 +119,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
 
     @Override
     public void onItemClicked(int position) {
-        String corporateId=mContactList.get(position).getCorporateId();
-//        String contactId= mContactList.get(position).getId();
-//        Contact currentContact = (Contact)RainbowSdk.instance().contacts().getContactFromId(contactId);
-//        Log.d(TAG, "onItemClicked: "+currentContact.getFirstName());
-//        getContactDetails(currentContact);
+        String corporateId = mContactList.get(position).getCorporateId();
         RainbowSdk.instance().contacts().getUserDataFromId(corporateId, new IUserProxy.IGetUserDataListener() {
             @Override
             public void onSuccess(Contact contact) {
@@ -138,18 +134,18 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
 
     }
 
-    public  void  getContactDetails(Contact contact){
+    public void getContactDetails(Contact contact) {
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
         String workEmail = contact.getEmailAddressForType(EmailAddress.EmailType.WORK);
         String homeEmail = contact.getEmailAddressForType(EmailAddress.EmailType.HOME);
-        String OfficePhone=contact.getFirstAvailableNumber();
-        String MobilePhone=contact.getFirstMobilePhoneNumber();
-        String isRoster=String.valueOf(contact.isRoster());
-        String id=contact.getCorporateId();
-        String jId=contact.getContactId();
-        String firstEmail=contact.getFirstEmailAddress();
-        String mainEmail=contact.getMainEmailAddress();
+        String OfficePhone = contact.getFirstAvailableNumber();
+        String MobilePhone = contact.getFirstMobilePhoneNumber();
+        String isRoster = String.valueOf(contact.isRoster());
+        String id = contact.getCorporateId();
+        String jId = contact.getContactId();
+        String firstEmail = contact.getFirstEmailAddress();
+        String mainEmail = contact.getMainEmailAddress();
         if (!workEmail.isEmpty()) {
             contactEmails.add(workEmail);
         }
@@ -168,7 +164,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
-        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails,contactPhones,isRoster ,id,jId));
+        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails, contactPhones, isRoster, id, jId));
 
         startActivity(intent);
     }
