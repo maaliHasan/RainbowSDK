@@ -162,29 +162,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 //Check to see which item was being clicked and perform appropriate action
                 switch (item.getItemId()) {
-
-                    //Replacing the main content with ContentFragment Which is our Inbox View;
-                    case R.id.inbox:
-                        Toast.makeText(getApplicationContext(), "Inbox Selected", Toast.LENGTH_SHORT).show();
-//                        ContentFragment fragment = new ContentFragment();
-//                        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//                        fragmentTransaction.replace(R.id.frame,fragment);
-//                        fragmentTransaction.commit();
-                        return true;
-
-                    // For rest of the options we just show a toast on click
-                    case R.id.sent_mail:
-                        Toast.makeText(getApplicationContext(), "Send Selected", Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.drafts:
-                        Toast.makeText(getApplicationContext(), "Drafts Selected", Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.allmail:
-                        Toast.makeText(getApplicationContext(), "All Mail Selected", Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.trash:
-                        Toast.makeText(getApplicationContext(), "Trash Selected", Toast.LENGTH_SHORT).show();
-                        return true;
                     case R.id.logout:
                         getPendingSentInvitations();
                         Toast.makeText(getApplicationContext(), "logOut Selected", Toast.LENGTH_SHORT).show();
@@ -229,23 +206,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mCategoriesAdapter = new CategoriesAdApter(getSupportFragmentManager(), this);
-        // Set up the ViewPager with the sections adapter.
+
+        final TabLayout TopTabLayout = (TabLayout) findViewById(R.id.tabs);
+        TopTabLayout.setTabTextColors(ColorStateList.valueOf((getResources().getColor(R.color.colorPrimary))));
+        TopTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(),R.color.colorPrimary));
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mCategoriesAdapter);
-        mViewPager.setCurrentItem(0);
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setTabTextColors(ColorStateList.valueOf((getResources().getColor(R.color.colorPrimary))));
-        tabLayout.addOnTabSelectedListener(
-                new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
-                    @Override
-                    public void onTabSelected(TabLayout.Tab tab) {
-                        super.onTabSelected(tab);
-                        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary));
-                    }
+        // Set up the ViewPager with the sections adapter.
+        mCategoriesAdapter = new CategoriesAdApter(getSupportFragmentManager());
+
+        TopTabLayout.setVisibility(View.GONE);
+        final TabLayout BttomTabLayout = (TabLayout)findViewById(R.id.tabs2);
+        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_contact));
+        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_conversation));
+        BttomTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(),R.color.colorPrimary));
+        BttomTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    mViewPager.setAdapter(mCategoriesAdapter);
+                    mViewPager.setCurrentItem(0);
+                    TopTabLayout.setupWithViewPager(mViewPager);
+                    TopTabLayout.setVisibility(View.VISIBLE);
+                    TopTabLayout.addOnTabSelectedListener(
+                            new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
+                                @Override
+                                public void onTabSelected(TabLayout.Tab tab) {
+                                    super.onTabSelected(tab);
+                                    TopTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary));
+                                }
+                            }
+                    );
+
+                    Toast.makeText(getApplicationContext(), "contacts Selected", Toast.LENGTH_SHORT).show();
                 }
-        );
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
 
     }
 
@@ -332,14 +339,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                instance().connection().signin("abzour@asaltech.com", "Asal@123", new SigninResponseListener() {
+                instance().connection().signin("mhasan@asaltech.com", "Asal@123", new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected
                         // Do something on the thread UI
                         Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
                         getConnectedUserInfo();
-
                     }
 
                     @Override
@@ -363,18 +369,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         // super.onBackPressed();
         int fragmentsCount = getSupportFragmentManager().getBackStackEntryCount();
-        if (fragmentsCount > 0) {
+        Log.d(TAG, "onBackPressed1: " + fragmentsCount);
+        if (fragmentsCount ==1) {
             getSupportFragmentManager().popBackStack();
-            Log.d(TAG, "onBackPressed: "+fragmentsCount);
-        } else {
-            // super.onBackPressed();
+            Log.d(TAG, "onBackPressed: " + fragmentsCount);
             mFragmentsContent.setVisibility(View.GONE);
-            mRelativeLayout.setVisibility(View.VISIBLE);
+         mRelativeLayout.setVisibility(View.VISIBLE);
+
         }
+        mRelativeLayout.setVisibility(View.VISIBLE);
+
     }
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause: ");
         super.onPause();
 
     }
@@ -473,14 +482,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void getPendingSentInvitations() {
+//        Contact contact=new Contact();
+//        contact= (Contact) RainbowSdk.instance().contacts().getContactFromJabberId("c47e988b453b420b8806516979dece01@openrainbow.com");
+        Log.d(TAG, "getPendingSentInvitations: ");
         List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
         Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());
         List<IRainbowContact> pendingReceivedInvitations = RainbowSdk.instance().contacts().getPendingReceivedInvitations();
         Log.d(TAG, "getPendingReceivedInvitations: " + pendingReceivedInvitations.size());
         ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
         Log.d(TAG, "getReceivedInvitations: " + invitationSent.getCount());
-        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
-        Log.d(TAG, "getSentInvitations: "+sentInvitation);
+        ArrayItemList<IRainbowContact> sentInvitation = RainbowSdk.instance().contacts().getSentInvitations();
+        Log.d(TAG, "getSentInvitations: " + sentInvitation);
 
     }
 

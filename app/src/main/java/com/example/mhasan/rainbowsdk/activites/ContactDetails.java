@@ -1,5 +1,6 @@
 package com.example.mhasan.rainbowsdk.activites;
 
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.GridLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.RainbowPresence;
@@ -26,28 +28,42 @@ import java.util.ListIterator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.mhasan.rainbowsdk.R.id.linearLayout;
+import static com.neovisionaries.i18n.LanguageCode.ca;
 import static com.neovisionaries.i18n.LanguageCode.cu;
+import static com.neovisionaries.i18n.LanguageCode.la;
+import static com.neovisionaries.i18n.LanguageCode.lo;
 
 /**
  * Created by mhasan on 7/30/2017.
- *
  */
 
-public class ContactDetails extends AppCompatActivity  implements View.OnClickListener{
-    private Boolean isInvitationSent=false;
+public class ContactDetails extends AppCompatActivity implements View.OnClickListener {
+    private Boolean isInvitationSent = false;
+    public final static String AFTER_Delete_USER = "deleted";
+    public final static String AFTER_ADD_USER = "added";
     ContactData mContact;
-    public static final String TAG= ContactDetails.class.getSimpleName();
-    private Contact.ContactListener m_contactListener= new Contact.ContactListener(){
+    private RelativeLayout invitationLayout;
+    private ImageView addUserIcon;
+    private  TextView pendingLabel;
+    private   RelativeLayout.LayoutParams pendingLabelParams;
+    private   TextView invitationLabel;
+    private LinearLayout linearLayout;
+    private ProgressDialog pDialog;
+    public static final String TAG = ContactDetails.class.getSimpleName();
+    private Contact.ContactListener m_contactListener = new Contact.ContactListener() {
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
         @Override
         public void contactUpdated(Contact contact) {
-
+            Log.d(TAG, "contactUpdated: " + contact.getFirstName());
+            // pDialog.dismiss();
 
         }
 
         @Override
         public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
-            Log.d(TAG, "onPresenceChanged: "+contact.getFirstName()+"  "+rainbowPresence.getPresence());
+            Log.d(TAG, "onPresenceChanged: " + contact.getFirstName() + "  " + rainbowPresence.getPresence());
         }
 
         @Override
@@ -56,17 +72,27 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
         }
     };
 
-    private IRainbowSentInvitationListener mAddContactListener= new IRainbowSentInvitationListener(){
+    private IRainbowSentInvitationListener mAddContactListener = new IRainbowSentInvitationListener() {
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
         @Override
         public void onInvitationSentSuccess(String s) {
-            isInvitationSent=true;
-            Log.d(TAG, "onInvitationSentSuccess: "+s);
+            isInvitationSent = true;
+            updateInvitationLayout(AFTER_ADD_USER);
+            Log.d(TAG, "onInvitationSentSuccess: " + s);
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
         @Override
         public void onInvitationSentError(RainbowServiceException e) {
-            Log.d(TAG, "onInvitationSentError: "+e.getDetailsMessage());
+            Log.d(TAG, "onInvitationSentError: " + e.getDetailsMessage());
+            updateInvitationLayout(AFTER_ADD_USER);
+            runOnUiThread(new Runnable() {
+                public void run() {
+                   Toast.makeText(getBaseContext(),"This User invitation has already been sent  in the last 3600 seconds, do not send email again",Toast.LENGTH_LONG).show();
+                }
+            });
+
         }
 
         @Override
@@ -76,17 +102,19 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
         }
     };
 
-    private IRainbowContactManagementListener mRemoveContactListener= new IRainbowContactManagementListener(){
+    private IRainbowContactManagementListener mRemoveContactListener = new IRainbowContactManagementListener() {
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
         @Override
         public void OnContactRemoveSuccess(String s) {
-            Log.d(TAG, "OnContactRemoveSuccess: "+s);
+            updateInvitationLayout(AFTER_Delete_USER);
+            Log.d(TAG, "OnContactRemoveSuccess: " + s);
 
         }
 
         @Override
         public void onContactRemovedError(Exception e) {
-            Log.d(TAG, "onContactRemovedError: "+e.toString());
+            Log.d(TAG, "onContactRemovedError: " + e.toString());
 
         }
     };
@@ -96,7 +124,15 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_deatails);
+        //   loadDialog();
         getContactData();
+    }
+
+    public void loadDialog() {
+        pDialog = new ProgressDialog(getBaseContext());
+        pDialog.setMessage("Loading");
+        pDialog.setCancelable(false);
+        pDialog.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -107,11 +143,11 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
         CircleImageView pic = (CircleImageView) findViewById(R.id.profile_pic);
 
         Bundle data = getIntent().getExtras();
-        mContact = (ContactData)data.getParcelable("ContactData");
-        Contact contact = (Contact) RainbowSdk.instance().contacts().getContactFromCorporateId(mContact.corporateId);
-        Log.d(TAG, "getContactData: "+contact.isInvited());
-        Contact currentContact=new Contact();
-        currentContact.notifyContactUpdated();
+         mContact = (ContactData) data.getParcelable("ContactData");
+//         Contact  contact = (Contact) RainbowSdk.instance().contacts().getContactFromCorporateId(mContact.corporateId);
+//        Log.d(TAG, "getContactData: "+mContact.corporateId);
+       //  contact.registerChangeListener(m_contactListener);
+      //  Log.d(TAG, "getContactData: " + mContact);
         boolean isRoster = Boolean.valueOf(mContact.isRoster);
 
         fullName.setText(mContact.fullName);
@@ -126,31 +162,36 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
         }
 
 
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-            RelativeLayout invitationLayout = new RelativeLayout(this);
-            RelativeLayout.LayoutParams IRLParams = new RelativeLayout.LayoutParams(
-                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            invitationLayout.setLayoutParams(IRLParams);
+         invitationLayout = new RelativeLayout(this);
+        RelativeLayout.LayoutParams IRLParams = new RelativeLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        invitationLayout.setLayoutParams(IRLParams);
 
-            TextView inDivider = new TextView(this);
-            inDivider.setId(View.generateViewId());
-            ImageView addUserIcon = new ImageView(this);
-            TextView invitationLabel = new TextView(this);
-            invitationLabel.setId(View.generateViewId());
+        TextView inDivider = new TextView(this);
+        inDivider.setId(View.generateViewId());
+        addUserIcon = new ImageView(this);
+         invitationLabel = new TextView(this);
+         pendingLabel = new TextView(this);
+        invitationLabel.setId(View.generateViewId());
 
-            RelativeLayout.LayoutParams inLParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            inLParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        RelativeLayout.LayoutParams inLParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        inLParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
-            RelativeLayout.LayoutParams addUserIconParams = new RelativeLayout.LayoutParams(48, 48);
-            addUserIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        RelativeLayout.LayoutParams addUserIconParams = new RelativeLayout.LayoutParams(48, 48);
+        addUserIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 
-            RelativeLayout.LayoutParams inDividerParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 1);
-            inDividerParams.addRule(RelativeLayout.BELOW, invitationLabel.getId());
-            inDividerParams.setMargins(0, 20, 0, 10);
+         pendingLabelParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        pendingLabelParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        pendingLabel.setVisibility(View.GONE);
 
+
+        RelativeLayout.LayoutParams inDividerParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 1);
+        inDividerParams.addRule(RelativeLayout.BELOW, invitationLabel.getId());
+        inDividerParams.setMargins(0, 20, 0, 10);
 
 
         if (!isRoster) {
@@ -160,41 +201,39 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
             addUserIcon.setId(R.id.addContact);
             addUserIcon.setImageResource(R.drawable.ic_add_user);
 
-        }else{
+        } else {
             invitationLabel.setText("Remove Contact from my Network");
             invitationLabel.setTextColor(getResources().getColor(R.color.red));
             addUserIcon.setId(R.id.removeContact);
             addUserIcon.setOnClickListener(this);
             addUserIcon.setImageResource(R.drawable.ic_remove_user);
         }
-            if (invitationLabel.getParent() != null)
-                ((ViewGroup) invitationLabel.getParent()).removeView(invitationLabel);
-            invitationLayout.addView(invitationLabel, inLParams);
+        if (invitationLabel.getParent() != null)
+            ((ViewGroup) invitationLabel.getParent()).removeView(invitationLabel);
+        invitationLayout.addView(invitationLabel, inLParams);
 
 
-            if (addUserIcon.getParent() != null)
-                ((ViewGroup) addUserIcon.getParent()).removeView(addUserIcon);
-            invitationLayout.addView(addUserIcon, addUserIconParams);
+        if (addUserIcon.getParent() != null)
+            ((ViewGroup) addUserIcon.getParent()).removeView(addUserIcon);
+        invitationLayout.addView(addUserIcon, addUserIconParams);
 
-            invitationLayout.addView(inDivider, inDividerParams);
+        invitationLayout.addView(inDivider, inDividerParams);
 
-            if (invitationLayout.getParent() != null)
-                ((ViewGroup) invitationLayout.getParent()).removeView(invitationLayout);
-            linearLayout.addView(invitationLayout);
+        if (invitationLayout.getParent() != null)
+            ((ViewGroup) invitationLayout.getParent()).removeView(invitationLayout);
+        linearLayout.addView(invitationLayout);
         /**
          * for testing till isRoster bug fixed !
 
-        if( mContact.emailAddresses.get(0).toString().equals("mabedalkareem@asaltech.com")){
-            invitationLabel.setText("Remove Contact from my Network");
-            invitationLabel.setTextColor(getResources().getColor(R.color.red));
-            addUserIcon.setId(R.id.removeContact);
-            addUserIcon.setOnClickListener(this);
-            addUserIcon.setImageResource(R.drawable.ic_remove_user);
+         if( mContact.emailAddresses.get(0).toString().equals("mabedalkareem@asaltech.com")){
+         invitationLabel.setText("Remove Contact from my Network");
+         invitationLabel.setTextColor(getResources().getColor(R.color.red));
+         addUserIcon.setId(R.id.removeContact);
+         addUserIcon.setOnClickListener(this);
+         addUserIcon.setImageResource(R.drawable.ic_remove_user);
 
-        }
-
-
-        /****/
+         }
+         /****/
 
         int emailsCount = mContact.emailAddresses.size();
         int phoneCount = mContact.phoneNumbers.size();
@@ -257,7 +296,6 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
             if (relativeLayout.getParent() != null)
                 ((ViewGroup) relativeLayout.getParent()).removeView(relativeLayout);
             linearLayout.addView(relativeLayout);
-
 
 
         }
@@ -329,19 +367,44 @@ public class ContactDetails extends AppCompatActivity  implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        String mainEmail=mContact.emailAddresses.get(0);
-        String id= mContact.corporateId;
-        String jid=mContact.jId;
-        switch(view.getId()){
+        String mainEmail = mContact.emailAddresses.get(0);
+        String id = mContact.corporateId;
+        String jid = mContact.jId;
+        switch (view.getId()) {
             case R.id.removeContact:
-               RainbowSdk.instance().contacts().removeContactFromRoster(jid,mainEmail,mRemoveContactListener);
+                RainbowSdk.instance().contacts().removeContactFromRoster(jid, mainEmail, mRemoveContactListener);
                 break;
-            case  R.id.addContact:
-                RainbowSdk.instance().contacts().addRainbowContactToRoster(id,mainEmail,mAddContactListener);
+            case R.id.addContact:
+                RainbowSdk.instance().contacts().addRainbowContactToRoster(id, mainEmail, mAddContactListener);
 
 
         }
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    void updateInvitationLayout(String status) {
+        //  loadDialog();
+        switch (status) {
+            case AFTER_Delete_USER:
+                invitationLabel.setText("Add Contact to my Network");
+                invitationLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
+                addUserIcon.setOnClickListener(this);
+                addUserIcon.setId(R.id.addContact);
+                addUserIcon.setImageResource(R.drawable.ic_add_user);
+                break;
+            case AFTER_ADD_USER :
+                addUserIcon.setVisibility(View.GONE);
+                pendingLabel.setText("pending");
+                pendingLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
+                pendingLabel.setVisibility(View.VISIBLE);
+                if (pendingLabel.getParent() != null)
+                    ((ViewGroup) pendingLabel.getParent()).removeView(pendingLabel);
+                invitationLayout.addView(pendingLabel, pendingLabelParams);
+                Log.d(TAG, "updateInvitationLayout: "+pendingLabel.getText());
+                break;
+        }
+
+
+    }
 }

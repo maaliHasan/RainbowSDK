@@ -67,8 +67,7 @@ public class PendingInvitationsAdapter extends RecyclerView.Adapter<PendingInvit
     @Override
     public void onBindViewHolder(pendingInvitationHolder holder, int position) {
         IRainbowContact contact=pendingInvitations.get(position);
-
-
+        Log.d(TAG, "onBindViewHolder: "+contact.getFirstName());
     }
 
 

@@ -3,6 +3,7 @@ package com.example.mhasan.rainbowsdk.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -38,10 +39,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 import static android.R.id.list;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static com.ale.rainbowsdk.RainbowSdk.instance;
 import static com.example.mhasan.rainbowsdk.R.id.PendingInvitationsList;
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
-import static com.neovisionaries.i18n.LanguageCode.lo;
+
 
 
 /**
@@ -49,7 +51,7 @@ import static com.neovisionaries.i18n.LanguageCode.lo;
  *
  */
 
-public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener ,IItemListChangeListener{
+public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener,IItemListChangeListener {
     public static final String TAG = ContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
     private RecyclerView mPendingInvitationRV;
@@ -91,7 +93,8 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mContactAD.notifyDataSetChanged();
+                  mContactAD.notifyDataSetChanged();
+                  //  getPendingSentInvitations();
                 }
             });
             mContactList.clear();
@@ -127,6 +130,8 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         mContactAD.setOnItemClickedListener(this);
         mContactRV.setAdapter(mContactAD);
         mContactRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+       // new GetData().execute();
+        //getPendingSentInvitations();
     }
 
     @Override
@@ -165,7 +170,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     }
 
     public void getContactDetails(Contact contact) {
-     //   getPendingSentInvitations();
+    //   getPendingSentInvitations();
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
         String id = contact.getCorporateId();
@@ -192,7 +197,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         Bitmap profilePic = contact.getPhoto();
         RainbowPresence presence = contact.getPresence();
         Intent intent = new Intent(getActivity(), ContactDetails.class);
-        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.name(), contactEmails, contactPhones, isRoster, id, jId));
+        intent.putExtra("ContactData", new ContactData(fullName, jobTitle, profilePic, presence.getPresence(), contactEmails, contactPhones, isRoster, id, jId));
         startActivity(intent);
     }
 
@@ -206,28 +211,30 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         });
     }
 
-//    void getPendingSentInvitations() {
-//        List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
-//        Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());
-//        List<IRainbowContact> pendingReceivedInvitations = RainbowSdk.instance().contacts().getPendingReceivedInvitations();
-//        Log.d(TAG, "getPendingReceivedInvitations: " + pendingReceivedInvitations.size());
-//        ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
-//        Log.d(TAG, "getReceivedInvitations: " + invitationSent.getCount());
-//        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
-//        Log.d(TAG, "getSentInvitations: "+sentInvitation);
-//
-//    }
+    void getPendingSentInvitations() {
+        List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
+        Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());
+        mPendingInvitationList = RainbowSdk.instance().contacts().getPendingReceivedInvitations();
+        Log.d(TAG, "getPendingReceivedInvitations1: " + mPendingInvitationList.size());
+        ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
+        Log.d(TAG, "getReceivedInvitations1: " + invitationSent.getCount());
+        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
+        Log.d(TAG, "getSentInvitations1: "+sentInvitation);
 
+    }
 
     @Override
     public void dataChanged() {
-        List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
-        Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());
-        List<IRainbowContact> pendingReceivedInvitations = RainbowSdk.instance().contacts().getPendingReceivedInvitations();
-        Log.d(TAG, "getPendingReceivedInvitations: " + pendingReceivedInvitations.size());
-        ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
-        Log.d(TAG, "getReceivedInvitations: " + invitationSent.getCount());
-        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
-        Log.d(TAG, "getSentInvitations: "+sentInvitation);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getPendingSentInvitations();
+            }
+        });
+
     }
+
+
+
+
 }

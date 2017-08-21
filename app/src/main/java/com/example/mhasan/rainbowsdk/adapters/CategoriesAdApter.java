@@ -1,6 +1,7 @@
 package com.example.mhasan.rainbowsdk.adapters;
 
 import android.content.Context;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -16,11 +17,10 @@ import com.example.mhasan.rainbowsdk.fragments.RainbowContactsFragment;
  */
 
 public class CategoriesAdApter extends FragmentStatePagerAdapter {
-    private Context mContex;
 
-    public CategoriesAdApter(FragmentManager fm, Context mContex) {
+    public CategoriesAdApter(FragmentManager fm) {
         super(fm);
-        this.mContex = mContex;
+
     }
 
     @Override

@@ -50,6 +50,7 @@ public class DirectoryContactsFragment extends Fragment implements DirectoryCont
 
         @Override
         public void searchStarted() {
+            Log.d(TAG, "searchStarted: ");
 
         }
 

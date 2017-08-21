@@ -10,6 +10,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:paddingTop="10dp"
+        android:visibility="gone"
        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contactList"
