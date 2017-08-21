@@ -131,6 +131,7 @@ To connect to Rainbow, you have to:
 
 **NB: The start service method is temporary and will probably be hidden later.**
 ```java
+
 	RainbowSdk.instance().connection().start(new StartResponseListener() {
 		@Override
 		public void onStartSucceeded() {
@@ -151,6 +152,7 @@ To connect to Rainbow, you have to:
 			// Do something
 		}
 	});
+	
 ```
 You can also call the *signin* method with the host you want to connect on (example: "sandbox.openrainbow.com"): 
 ```java
