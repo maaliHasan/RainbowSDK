@@ -17,7 +17,7 @@ This documentation will help you to use it.
 ## Rainbow developper account
 ---
 
-Your need a Rainbow **developer** account in order to use the Rainbow SDK for Node.js.
+Your need a Rainbow **developer** account in order to use the Rainbow SDK for Android
 
 Please contact the Rainbow [support](mailto:support@openrainbow.com) team if you need one.
 
