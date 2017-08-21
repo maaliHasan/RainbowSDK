@@ -201,14 +201,15 @@ Here is a list of the events that you can subscribe on:
 | Name | Description |
 |------|------------|
 | **SigninResponseListener** | Fired when you try to connect to Rainbow and do signin |
-| **IContactListener** | Fired   when contact has been updated |
-| **IRainbowConversationsListener** | FThis event is fired when the list of conversations has changed. |
-| **IRainbowGetConversationListener** | Fired when the conversation is being called|
-| **IRainbowImListener** | Fired when a new message is received for a given conversation. |
-| **IRainbowInvitationManagementListener** | Fired when invitation beibg accept or decline |
+| **IContactListener** | Fired  when contact has been updated |
+| **IRainbowInvitationManagementListener** | Fired when invitation is being accepted or declined |
 | **IRainbowSentInvitationListener** | Fired when invitation is being sent |
 | **IContactSearchListener** | Fired when you search for contact |
 | **IRainbowContactManagementListener** | Fired when you a contact is being  removed  from  roster list |
+| **IRainbowImListener** | Fired when a new message is received for a given conversation. |
+| **IRainbowConversationsListener** | fired when the list of conversations has changed. |
+| **IRainbowGetConversationListener** | Fired when the conversation is being called|
+
 
 ## Contacts
 ---
