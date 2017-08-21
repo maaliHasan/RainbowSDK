@@ -454,12 +454,15 @@ To set Presence manually call this API
 RainbowSDK.instance().myProfile().setPresenceTo(RainbowPresence presence);
 ```
 The following Rainbow Presence  values  are accepted:
+
+
 | Presence constant | value | Meaning |
 |------------------ | ----- | ------- |
 | **ONLINE** | "online" | The connected user is seen as **available** |
 | **DND** | "dnd" | The connected user is seen as **do not disturb** |
 | **AWAY** | "away" | The connected user is seen as **away** |
 | **OFFLINE** | "invisible" | The connected user is connected but **seen as offline** |
+
 
 Notice: Values other than the ones listed will not be taken into account.
 
