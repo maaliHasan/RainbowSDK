@@ -3,10 +3,8 @@ package com.example.mhasan.rainbowsdk.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
+
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,33 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.ale.infra.application.RainbowContext;
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.EmailAddress;
 import com.ale.infra.contact.IRainbowContact;
 import com.ale.infra.contact.RainbowPresence;
-import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
 import com.ale.infra.list.ArrayItemList;
 import com.ale.infra.list.IItemListChangeListener;
-import com.ale.infra.proxy.users.IUserProxy;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.activites.ContactData;
 import com.example.mhasan.rainbowsdk.activites.ContactDetails;
 import com.example.mhasan.rainbowsdk.adapters.ContactsAdapter;
-import com.example.mhasan.rainbowsdk.adapters.PendingInvitationsAdapter;
-import com.google.gson.Gson;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import static android.R.id.list;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static com.ale.rainbowsdk.RainbowSdk.instance;
-import static com.example.mhasan.rainbowsdk.R.id.PendingInvitationsList;
 import static com.example.mhasan.rainbowsdk.R.id.contactList;
-
 
 
 /**
@@ -51,13 +41,11 @@ import static com.example.mhasan.rainbowsdk.R.id.contactList;
  *
  */
 
-public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener,IItemListChangeListener {
+public class ContactsFragment extends Fragment implements ContactsAdapter.OnItemClickListener, IItemListChangeListener {
     public static final String TAG = ContactsFragment.class.getSimpleName();
     private RecyclerView mContactRV;
-    private RecyclerView mPendingInvitationRV;
     private ContactsAdapter mContactAD;
-    private PendingInvitationsAdapter mPendingInvitationAD;
-    ArrayList<Contact> mContactList;
+    private ArrayList<Contact> mContactList;
     List<IRainbowContact> mPendingInvitationList;
     private ProgressDialog pDialog;
 
@@ -65,15 +53,15 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
         @Override
         public void contactUpdated(Contact contact) {
-            ListIterator<Contact> iterator = mContactList.listIterator();
-            while (iterator.hasNext()) {
-                Contact next = iterator.next();
-                if (next.equals(contact)) {
-                    iterator.set(contact);
-
-                }
-            }
-            updateAdapter();
+//            ListIterator<Contact> iterator = mContactList.listIterator();
+//            while (iterator.hasNext()) {
+//                Contact next = iterator.next();
+//                if (next.equals(contact)) {
+//                    iterator.set(contact);
+//
+//                }
+//            }
+        //    updateAdapter();
 
         }
 
@@ -93,8 +81,9 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                  mContactAD.notifyDataSetChanged();
-                  //  getPendingSentInvitations();
+                    mContactRV.getRecycledViewPool().clear();
+                    mContactAD.notifyDataSetChanged();
+                    //  getPendingSentInvitations();
                 }
             });
             mContactList.clear();
@@ -102,10 +91,11 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
             int size = arrayItemList.getCount();
             for (int i = 0; i < size; i++) {
                 Contact contact = (Contact) arrayItemList.get(i);
+                Log.d(TAG, "dataChanged: " + contact.getFirstName());
                 contact.registerChangeListener(m_contactListener);
                 mContactList.add(contact);
             }
-            pDialog.dismiss();
+         // pDialog.dismiss();
         }
     };
 
@@ -114,23 +104,19 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.mContactList = new ArrayList<>();
-        View rootView = inflater.inflate(R.layout.fragment_contacts, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.fragment_contacts, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadDialog();
+       // loadDialog();
         instance().contacts().getRainbowContacts().registerChangeListener(m_changeListener);
         mContactRV = getActivity().findViewById(contactList);
-        mPendingInvitationRV= getActivity().findViewById(PendingInvitationsList);
         mContactAD = new ContactsAdapter(getActivity(), mContactList);
-        mPendingInvitationAD = new PendingInvitationsAdapter(getActivity(), mPendingInvitationList);
         mContactAD.setOnItemClickedListener(this);
         mContactRV.setAdapter(mContactAD);
         mContactRV.setLayoutManager(new LinearLayoutManager(getActivity()));
-       // new GetData().execute();
         //getPendingSentInvitations();
     }
 
@@ -152,25 +138,13 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
     public void onItemClicked(int position) {
         final String corporateId = mContactList.get(position).getCorporateId();
         Contact currentContact = (Contact) RainbowSdk.instance().contacts().getContactFromCorporateId(corporateId);
-        if(currentContact.isBot()){
-            Toast.makeText(getContext(),"This  is Bot Contact !",Toast.LENGTH_LONG).show();
+        if (currentContact.isBot()) {
+            Toast.makeText(getContext(), "This  is Bot Contact !", Toast.LENGTH_LONG).show();
         }
         getContactDetails(currentContact);
-//        RainbowSdk.instance().contacts().getUserDataFromId(corporateId, new IUserProxy.IGetUserDataListener() {
-//            @Override
-//            public void onSuccess(Contact contact) {
-//                getContactDetails(contact);
-//            }
-//
-//            @Override
-//            public void onFailure(RainbowServiceException exception) {
-//
-//            }
-//        });
     }
 
     public void getContactDetails(Contact contact) {
-    //   getPendingSentInvitations();
         ArrayList<String> contactEmails = new ArrayList<>();
         ArrayList<String> contactPhones = new ArrayList<>();
         String id = contact.getCorporateId();
@@ -201,7 +175,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         startActivity(intent);
     }
 
-    private void updateAdapter(){
+    private void updateAdapter() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -218,8 +192,8 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         Log.d(TAG, "getPendingReceivedInvitations1: " + mPendingInvitationList.size());
         ArrayItemList<IRainbowContact> invitationSent = RainbowSdk.instance().contacts().getReceivedInvitations();
         Log.d(TAG, "getReceivedInvitations1: " + invitationSent.getCount());
-        ArrayItemList<IRainbowContact> sentInvitation=RainbowSdk.instance().contacts().getSentInvitations();
-        Log.d(TAG, "getSentInvitations1: "+sentInvitation);
+        ArrayItemList<IRainbowContact> sentInvitation = RainbowSdk.instance().contacts().getSentInvitations();
+        Log.d(TAG, "getSentInvitations1: " + sentInvitation);
 
     }
 
@@ -233,8 +207,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         });
 
     }
-
-
 
 
 }

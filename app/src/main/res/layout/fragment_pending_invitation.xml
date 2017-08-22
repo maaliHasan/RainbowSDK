@@ -4,14 +4,6 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/directoryContactList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="10dp"
-        />
-
     <TextView
         android:id="@+id/noResult"
         android:layout_width="wrap_content"

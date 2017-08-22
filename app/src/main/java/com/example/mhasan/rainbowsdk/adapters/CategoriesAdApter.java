@@ -1,15 +1,12 @@
 package com.example.mhasan.rainbowsdk.adapters;
 
-import android.content.Context;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.ale.infra.manager.Conversation;
 import com.example.mhasan.rainbowsdk.fragments.ContactsFragment;
 import com.example.mhasan.rainbowsdk.fragments.ConversationsFragment;
-import com.example.mhasan.rainbowsdk.fragments.RainbowContactsFragment;
+import com.example.mhasan.rainbowsdk.fragments.PendingInvitation;
 
 /**
  * Created by mhasan on 7/20/2017.
@@ -27,11 +24,12 @@ public class CategoriesAdApter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return new ContactsFragment();
+                return new ConversationsFragment();
             case 1:
-                return new RainbowContactsFragment();
+               return new ContactsFragment();
 //            case 2:
-//                return new ConversationsFragment();
+//                return new PendingInvitation();
+
         }
         return null;
     }
@@ -45,13 +43,11 @@ public class CategoriesAdApter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Contacts" ;
+                return "" ;
             case 1:
-                return "ALL Contacts";
-            case 2:
-                return "Conversation";
-
-
+                return "";
+//            case 2:
+//                return "Invitation";
         }
         return null;
     }

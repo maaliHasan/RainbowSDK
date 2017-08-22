@@ -1,11 +1,8 @@
 package com.example.mhasan.rainbowsdk.activites;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -21,25 +18,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,12 +42,9 @@ import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.adapters.CategoriesAdApter;
-import com.example.mhasan.rainbowsdk.adapters.DirectoryContactsAdapter;
 import com.example.mhasan.rainbowsdk.fragments.DirectoryContactsFragment;
 
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -71,21 +57,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String TAG = MainActivity.class.getSimpleName();
     private String mUserName;
     private String mEmail;
-    private String mUserPresence;
     private RelativeLayout mRelativeLayout;
     private RelativeLayout mFragmentsContent;
-    private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private NavigationView navigationView;
-    private View mHeaderLayout;
     private TextView mNameText;
     private TextView mEmailText;
     private TextView mPresence;
     private CircleImageView mProfilePic;
     private CircleImageView mPresenceIcon;
     private ImageView mViewPresence;
-    private Bitmap mUserPic;
     private Contact mConnectedContact;
     private Contact mUpdatedConnectedContact;
     private Contact.ContactListener m_contactListener = new Contact.ContactListener() {
@@ -110,23 +91,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-
-    private CategoriesAdApter mCategoriesAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
-
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,11 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRelativeLayout = (RelativeLayout) findViewById(R.id.viewPagerLayout);
         mFragmentsContent = (RelativeLayout) findViewById(R.id.fragmentsContent);
-//        mDrawerList = (ListView) findViewById(R.id.navList);
 
         //Initializing NavigationView
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mHeaderLayout = navigationView.getHeaderView(0);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        View mHeaderLayout = navigationView.getHeaderView(0);
         mNameText = mHeaderLayout.findViewById(R.id.username);
         mEmailText = mHeaderLayout.findViewById(R.id.email);
         mPresence = mHeaderLayout.findViewById(R.id.presence);
@@ -210,48 +173,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final TabLayout TopTabLayout = (TabLayout) findViewById(R.id.tabs);
         TopTabLayout.setTabTextColors(ColorStateList.valueOf((getResources().getColor(R.color.colorPrimary))));
         TopTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(),R.color.colorPrimary));
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        /*
+      The {@link ViewPager} that will host the section contents.
+     */
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+
         // Set up the ViewPager with the sections adapter.
-        mCategoriesAdapter = new CategoriesAdApter(getSupportFragmentManager());
+        /*
+      The {@link android.support.v4.view.PagerAdapter} that will provide
+      fragments for each of the sections. We use a
+      {@link FragmentPagerAdapter} derivative, which will keep every
+      loaded fragment in memory. If this becomes too memory intensive, it
+      may be best to switch to a
+      {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+        CategoriesAdApter mCategoriesAdapter = new CategoriesAdApter(getSupportFragmentManager());
+        mViewPager.setAdapter(mCategoriesAdapter);
+        mViewPager.setCurrentItem(0);
+        TopTabLayout.setupWithViewPager(mViewPager);
+        TopTabLayout.getTabAt(0).setIcon(R.drawable.ic_conversation);
+        TopTabLayout.getTabAt(1).setIcon(R.drawable.ic_contact);
 
-        TopTabLayout.setVisibility(View.GONE);
-        final TabLayout BttomTabLayout = (TabLayout)findViewById(R.id.tabs2);
-        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_contact));
-        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_conversation));
-        BttomTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(),R.color.colorPrimary));
-        BttomTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    mViewPager.setAdapter(mCategoriesAdapter);
-                    mViewPager.setCurrentItem(0);
-                    TopTabLayout.setupWithViewPager(mViewPager);
-                    TopTabLayout.setVisibility(View.VISIBLE);
-                    TopTabLayout.addOnTabSelectedListener(
-                            new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
-                                @Override
-                                public void onTabSelected(TabLayout.Tab tab) {
-                                    super.onTabSelected(tab);
-                                    TopTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary));
-                                }
-                            }
-                    );
-
-                    Toast.makeText(getApplicationContext(), "contacts Selected", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+       // TopTabLayout.setVisibility(View.GONE);
+//        final TabLayout BttomTabLayout = (TabLayout)findViewById(R.id.tabs2);
+//        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_contact));
+//        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_conversation));
+//        BttomTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(),R.color.colorPrimary));
+//        BttomTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                if (tab.getPosition() == 0) {
+//                    mViewPager.setAdapter(mCategoriesAdapter);
+//                    mViewPager.setCurrentItem(0);
+//                    TopTabLayout.setupWithViewPager(mViewPager);
+//                    TopTabLayout.setVisibility(View.VISIBLE);
+//                    TopTabLayout.addOnTabSelectedListener(
+//                            new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
+//                                @Override
+//                                public void onTabSelected(TabLayout.Tab tab) {
+//                                    super.onTabSelected(tab);
+//                                    TopTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary));
+//                                }
+//                            }
+//                    );
+//
+//                    Toast.makeText(getApplicationContext(), "contacts Selected", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//
+//            }
+//        });
 
 
     }
@@ -400,8 +380,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mUserName = contact.getFirstName() + " " + contact.getLastName();
         Log.d(TAG, "updateConnectedUserInfo: " + contact.getFirstName() + " " + contact.getPresence());
         mEmail = contact.getLoginEmail();
-        mUserPresence = contact.getPresence().getPresence();
-        mUserPic = contact.getPhoto();
+        Bitmap mUserPic = contact.getPhoto();
         mNameText.setText(mUserName);
         mEmailText.setText(mEmail);
         if ((contact.getPhoto()) != null) {
