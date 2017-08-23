@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.ale.infra.list.ArrayItemList;
 import com.ale.infra.list.IItemListChangeListener;
@@ -19,7 +18,7 @@ import com.ale.infra.manager.Conversation;
 import com.ale.infra.proxy.conversation.IRainbowConversation;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
-import com.example.mhasan.rainbowsdk.activites.ConversationActivity;
+import com.example.mhasan.rainbowsdk.activites.ChatActivity;
 import com.example.mhasan.rainbowsdk.adapters.ConversationsAdapter;
 
 import java.util.ArrayList;
@@ -100,7 +99,7 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
     public void onItemClicked(int position) {
         Conversation currentConversation = mConversationList.get(position);
         String conversationId= currentConversation.getId() ;
-        Intent intent= new Intent(getActivity(), ConversationActivity.class);
+        Intent intent= new Intent(getActivity(), ChatActivity.class);
         intent.putExtra("conversationId",conversationId);
         startActivity(intent);
 

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -92,7 +91,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
     @Override
     public dataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.conversation_container, parent, false);
+        View view = inflater.inflate(R.layout.list_item_conversation, parent, false);
         return new dataHolder(view);
     }
 
@@ -100,7 +99,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     public void onBindViewHolder(dataHolder holder, int position) {
         Conversation currentConversation = conversationList.get(position);
         Contact contact = currentConversation.getContact();
-        Log.d(TAG, "onBindViewHolder: "+contact.getPresence());
         IMMessage lastMessage = currentConversation.getLastMessage();
 
         if (currentConversation.isRoomType()) {

@@ -1,9 +1,7 @@
 package com.example.mhasan.rainbowsdk.adapters;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ale.infra.contact.Contact;
-import com.ale.infra.contact.RainbowPresence;
 import com.example.mhasan.rainbowsdk.R;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.example.mhasan.rainbowsdk.R.id.contactList;
 
 
 /**
@@ -52,7 +47,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
 
     @Override
     public dataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.contact_container, parent, false);
+        View view = inflater.inflate(R.layout.list_item_contact, parent, false);
         return new dataHolder(view);
     }
 

@@ -9,13 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.IRainbowContact;
 import com.ale.infra.list.ArrayItemList;
-import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -60,7 +57,7 @@ public class PendingInvitationsAdapter extends RecyclerView.Adapter<PendingInvit
 
     @Override
     public pendingInvitationHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.pending_invitation, parent, false);
+        View view = inflater.inflate(R.layout.list_item_pending_invitation, parent, false);
         return new PendingInvitationsAdapter.pendingInvitationHolder(view);
     }
 

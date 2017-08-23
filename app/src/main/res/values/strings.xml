@@ -33,6 +33,7 @@
     <string name="offline">Offline</string>
     <string name="donotdist">Do not disturb</string>
     <string name="title_activity_search_by_name_contactas">SearchByNameContactasActivity</string>
+    <string name="typeMessage">Enter your text here...</string>
 
 
 </resources>

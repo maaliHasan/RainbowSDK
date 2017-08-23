@@ -14,8 +14,6 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.mhasan.rainbowsdk.R.id.contactList;
-
 /**
  * Created by mhasan on 7/20/2017.
  *
@@ -45,7 +43,7 @@ public class DirectoryContactsAdapter extends RecyclerView.Adapter<DirectoryCont
 
     @Override
     public dataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.contact_container, parent, false);
+        View view = inflater.inflate(R.layout.list_item_contact, parent, false);
         return new dataHolder(view);
     }
 
