@@ -467,7 +467,71 @@ The following Rainbow Presence  values  are accepted:
 Notice: Values other than the ones listed will not be taken into account.
 
 
+## Instant Messaging 
+---------
+### Retrieve conversations
 
+To retrieve all active conversations (peer to peer conversations and bubles, you can call the method getAllConversations() but you have to **listen to the conversations list changes**. See more in **[ArrayItemList.md](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/blob/master/docs/tutorials/ArrayItemList.md)**.  
+You can do it by creating an IItemListChangeListener in the class which is listening and then register.
+```java
+    public class MyFragmentWhichIsListeningConversations extends Fragment {
+		private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
+			@Override
+			public void dataChanged() {
+				// Do something on the thread UI
+				ArrayItemList<IRainbowConversation> conversations = RainbowSdk.instance().
+				conversations().getAllConversations();                                          
+			}
+		}
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            RainbowSdk.instance().conversations().getAllConversations().registerChangeListener(m_changeListener);
+         	return view;
+        }
+        @Override
+        public void onDestroyView() {
+            RainbowSdk.instance().conversations().getAllConversations().unregisterChangeListener(m_changeListener);
+            super.onDestroyView();
+        }
+    }
+```
+To differenciate the two types of conversation, you can use the **isRoomType** method of IRainbowConversation.
+```java
+	for(IRainbowConversation conversation : conversations.getCopyOfDatalist()) {
+		if (conversation.isRoomType()) {
+			// The conversation is a bubble / room
+		}
+		else {
+			// The conversation is a peer to peer conversation
+		}
+	}
+	
+  ``` 
+  ### Listening to receipt of message read
+ ```java
+ /** 
+ * In progress
+ ***/
+ ```
+  ### Marking a message as read
+ ```java
+ /** 
+ * In progress
+ ***/
+ ```
+  ###  Listening to receipt of message received
+ ```java
+ /** 
+ * In progress
+ ***/
+ ```
+  ###   Listening to receipt of message read
+ ```java
+ /** 
+ * In progress
+ ***/
+ ```
 
 
 ## Features provided
@@ -478,11 +542,10 @@ Here is the list of features supported by the Rainbow-Android-SDK
 
 ### Instant Messaging
 
- - 
-
- - 
-
-
+ -  Retrieving or creating a conversation from a contact.
+ -  Sending a new message .
+ -  Listening for a incoming message.
+ -  Marking a message as received or read .
 
 ### Contacts
 
