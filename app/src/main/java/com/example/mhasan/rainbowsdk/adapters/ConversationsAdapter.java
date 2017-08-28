@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.neovisionaries.i18n.LanguageCode.ig;
 
 
 /**
@@ -64,8 +65,10 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         TextView lastMsg;
         CircleImageView status;
         TextView time;
+        TextView unReadMsg;
         CircleImageView profilePic;
         RelativeLayout conversationLayout;
+
 
 
         public dataHolder(View itemView) {
@@ -73,10 +76,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
             name = itemView.findViewById(R.id.name);
             status = itemView.findViewById(R.id.status);
             time = itemView.findViewById(R.id.time);
+            unReadMsg=itemView.findViewById(R.id.unReadMsg);
             profilePic = itemView.findViewById(R.id.profile_pic);
             lastMsg = itemView.findViewById(R.id.lastMsg2);
             conversationLayout=itemView.findViewById(R.id.conversation_layout);
             conversationLayout.setOnClickListener(this);
+
 
 
         }
@@ -87,7 +92,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
         }
     }
-
 
     @Override
     public dataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -100,10 +104,11 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         Conversation currentConversation = conversationList.get(position);
         Contact contact = currentConversation.getContact();
         IMMessage lastMessage = currentConversation.getLastMessage();
+        int unReadMsg=currentConversation.getUnreadMsgNb();
+        Log.d(TAG, "onBindViewHolder: "+unReadMsg);
 
         if (currentConversation.isRoomType()) {
             Room currentRoom = currentConversation.getRoom();
-            Log.d(TAG, "onBindViewHolder: " + currentRoom.getName());
             holder.name.setText(currentRoom.getName());
             holder.profilePic.setImageResource(R.drawable.ic_group);
             holder.status.setVisibility(View.INVISIBLE);
@@ -128,13 +133,17 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
             } else {
                 holder.status.setImageResource(R.drawable.ic_offline);
             }
+            if(unReadMsg>0){
+                holder.unReadMsg.setText(String.valueOf(unReadMsg));
+                holder.unReadMsg.setVisibility(View.VISIBLE);
+            }
         }
+
         if ((lastMessage.getMessageContent()) != null) {
             holder.lastMsg.setText(lastMessage.getMessageContent());
             Calendar cal = Calendar.getInstance(Locale.ENGLISH);
             cal.setTimeInMillis(lastMessage.getTimeStamp());
             String date = DateFormat.format("dd MMM ", cal).toString();
-            Log.d(TAG, "onBindViewHolder: " + date);
             holder.time.setText(date);
         } else {
             holder.lastMsg.setText(" ");

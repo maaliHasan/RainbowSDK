@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,15 +54,15 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
 
         @Override
         public void contactUpdated(Contact contact) {
-//            ListIterator<Contact> iterator = mContactList.listIterator();
-//            while (iterator.hasNext()) {
-//                Contact next = iterator.next();
-//                if (next.equals(contact)) {
-//                    iterator.set(contact);
-//
-//                }
-//            }
-        //    updateAdapter();
+            ListIterator<Contact> iterator = mContactList.listIterator();
+            while (iterator.hasNext()) {
+                Contact next = iterator.next();
+                if (next.equals(contact)) {
+                    iterator.set(contact);
+
+                }
+            }
+            updateAdapter();
 
         }
 
@@ -76,13 +77,17 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         }
     };
     private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
+
         @Override
         public void dataChanged() {
             getActivity().runOnUiThread(new Runnable() {
+
                 @Override
                 public void run() {
                     mContactRV.getRecycledViewPool().clear();
-                    mContactAD.notifyDataSetChanged();
+                   // mContactAD.notifyDataSetChanged();
+                 //   Log.d(TAG, "run: "+mContactList.size());
+                    mContactAD.notifyItemRangeChanged(0, mContactList.size());
                     //  getPendingSentInvitations();
                 }
             });

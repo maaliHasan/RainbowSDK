@@ -92,8 +92,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
 
     @Override
     public int getItemCount() {
-        return contactList.size();
-    }
+        if(contactList != null){
+            return contactList.size();
+
+        }else{
+            return 0;
+        }
+           }
 
     class dataHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView fullName;
@@ -123,6 +128,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.dataHo
 
     @Override
     public long getItemId(int position) {
-        return position;
+       if(contactList != null){
+            return position;
+
+        }else{
+            return 0;
+
+        }
+
     }
 }

@@ -3,8 +3,10 @@ package com.example.mhasan.rainbowsdk.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,6 +34,7 @@ import static com.example.mhasan.rainbowsdk.adapters.ContactsAdapter.TAG;
  */
 
 public class ConversationsFragment extends Fragment  implements ConversationsAdapter.OnItemClickListener{
+    public  static final String TAG=ConversationsFragment.class.getSimpleName();
     private ProgressDialog pDialog;
     private ConversationsAdapter mConversationAD;
     private ArrayList<Conversation> mConversationList;
@@ -44,7 +47,9 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
 
                 @Override
                 public void run() {
-                    mConversationAD.notifyDataSetChanged();
+                  Log.d(TAG, "run: "+mConversationList.size());
+                    mConversationAD.notifyItemRangeChanged(0, mConversationList.size());
+                    //mConversationAD.notifyDataSetChanged();
                 }
             });
             // Do something on the thread UI
@@ -77,9 +82,10 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
         RainbowSdk.instance().conversations().getAllConversations().registerChangeListener(m_changeListener);
         RecyclerView mConversationRV = getActivity().findViewById(conversationList);
         mConversationAD = new ConversationsAdapter(getActivity(), mConversationList);
-         mConversationAD.setOnItemClickedListener(this);
+        mConversationAD.setOnItemClickedListener(this);
         mConversationRV.setAdapter(mConversationAD);
         mConversationRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mConversationAD.notifyDataSetChanged();
 
     }
 
@@ -104,4 +110,5 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
         startActivity(intent);
 
     }
+
 }

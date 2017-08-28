@@ -41,21 +41,30 @@
         android:layout_alignTop="@+id/status"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="11dp"
+        android:paddingTop="4dp"
         android:hint="this is the last Message "
         android:textColor="@android:color/darker_gray"
         android:textSize="14sp" />
-
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_below="@+id/profile_pic"
-        android:layout_marginTop="2dp"
-        android:background="@android:color/black" />
+        android:id="@+id/unReadMsg"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_unread_msg"
+        android:textColor="@color/white"
+        android:hint="1"
+        android:paddingTop="4dp"
+        android:paddingLeft="6dp"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/status"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_alignBottom="@+id/profile_pic"
         android:layout_toLeftOf="@+id/name"
         android:layout_toStartOf="@+id/name"
