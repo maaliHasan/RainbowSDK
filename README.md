@@ -14,7 +14,7 @@ Its powerfull APIs enable you to create the best Android applications that conne
 This documentation will help you to use it.
 
 
-## Rainbow developper account
+## Rainbow developer account
 ---
 
 Your need a Rainbow **developer** account in order to use the Rainbow SDK for Android
