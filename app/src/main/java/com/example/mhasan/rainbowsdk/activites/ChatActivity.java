@@ -1,44 +1,35 @@
 package com.example.mhasan.rainbowsdk.activites;
 
 import android.app.ProgressDialog;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.ale.infra.contact.Contact;
 import com.ale.infra.list.ArrayItemList;
 import com.ale.infra.list.IItemListChangeListener;
-import com.ale.infra.manager.ChatMgr;
 import com.ale.infra.manager.Conversation;
 import com.ale.infra.manager.IMMessage;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.adapters.ChatAdapter;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import static android.util.Config.LOGD;
-import static com.neovisionaries.i18n.LanguageCode.lo;
-import static com.neovisionaries.i18n.LanguageCode.ms;
+import static android.R.attr.data;
 
 /**
  * Created by mhasan on 8/22/2017.
- *
  */
 
 public class ChatActivity extends AppCompatActivity {
@@ -47,58 +38,33 @@ public class ChatActivity extends AppCompatActivity {
     private ListView messagesContainer;
     private ImageButton sendBtn;
     private ChatAdapter adapter;
-    private ArrayList<IMMessage> chatHistory;
+    private ArrayList<IMMessage> chatMessages;
     Conversation conversation;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     String mTitle = " ";
     private ProgressDialog pDialog;
-    private ChatMgr.IChatMgrListener m_listener = new ChatMgr.IChatMgrListener() {
-
-        @Override
-        public void onImReceived(Conversation conversation, IMMessage imMessage) {
-
-        }
-
-        @Override
-        public void isTypingState(Contact contact, boolean b, String s) {
-
-        }
-
-        @Override
-        public void onImSent(Conversation conversation) {
-
-        }
-
-        @Override
-        public void onConversationsUpdated() {
-
-        }
-    };
     private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
         @Override
         public void dataChanged() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // mContactAD.notifyDataSetChanged();
                     adapter.notifyDataSetChanged();
                     scroll();
                 }
             });
             // Do something on the thread UI
-            chatHistory.clear();
+            chatMessages.clear();
             ArrayItemList<IMMessage> messages = conversation.getMessages();
-            int msgCount= messages.getCount();
+            int msgCount = messages.getCount();
             mTitle = conversation.getName();
-            Log.d(TAG, "dataChanged: " + mTitle);
-            for(int i=0;i<msgCount;i++){
+            Log.d(TAG, "dataChanged: " + msgCount);
+            for (int i = 0; i < msgCount; i++) {
                 IMMessage msg = messages.get(i);
-                if(msg !=null){
-                    chatHistory.add(msg);
+                if (msg != null) {
+                    chatMessages.add(msg);
                 }
             }
-
-
-
             pDialog.dismiss();
         }
 
@@ -108,10 +74,20 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        chatHistory = new ArrayList<>();
+        chatMessages = new ArrayList<>();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                getMoreMessages();
+            }
+        }));
+        setCustomTitle("Alaa Bzour");
+
         getConversation();
     }
 
@@ -120,16 +96,30 @@ public class ChatActivity extends AppCompatActivity {
         messagesContainer = (ListView) findViewById(R.id.messagesContainer);
         messageET = (EditText) findViewById(R.id.messageEdit);
         sendBtn = (ImageButton) findViewById(R.id.chatSendButton);
-        RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
-        adapter = new ChatAdapter(chatHistory, getBaseContext());
+        adapter = new ChatAdapter(chatMessages, getBaseContext());
         messagesContainer.setAdapter(adapter);
+        messagesContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+            }
+
+            //check if the first row being shown matches the first top-most position, and then enable the SwipeRefreshLayout. Otherwise, disable it.
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int topRowVerticalPosition =(messagesContainer == null || messagesContainer.getChildCount() == 0) ?0 : messagesContainer.getChildAt(0).getTop();
+                mSwipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+            }
+        });
 
         Bundle data = getIntent().getExtras();
         String id = data.getString("conversationId");
         conversation = (Conversation) RainbowSdk.instance().conversations().getConversationFromId(id);
-        setCustomTitle(conversation.getName());
+        //  setCustomTitle(conversation.getName());
         RainbowSdk.instance().im().markMessagesFromConversationAsRead(conversation);
-        RainbowSdk.instance().im().getMoreMessagesFromConversation(conversation, 9);
+        RainbowSdk.instance().im().getMessagesFromConversation(conversation, 9);
         conversation.getMessages().registerChangeListener(m_changeListener);
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,24 +130,31 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 RainbowSdk.instance().im().markMessagesFromConversationAsRead(conversation);
                 RainbowSdk.instance().im().sendMessageToConversation(conversation, messageText);
+                messageET.setText(" ");
 
             }
 
         });
     }
 
-     private void scroll() {
-        Log.d(TAG, "scroll: "+messagesContainer.getCount());
+    private void scroll() {
+        Log.d(TAG, "scroll: " + messagesContainer.getCount());
         messagesContainer.setSelection(messagesContainer.getCount() - 1);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //finish();
+                onBackPressed();
+                break;
+        }
+        return true;
     }
 
     void setCustomTitle(String title) {
-        Log.d(TAG, "setCustomTitle: "+title);
+        Log.d(TAG, "setCustomTitle: " + title);
         TextView tabOne = (TextView) LayoutInflater.from(getBaseContext()).inflate(R.layout.custom_title, null);
         tabOne.setText(title);
         getSupportActionBar().setCustomView(tabOne);
@@ -168,5 +165,17 @@ public class ChatActivity extends AppCompatActivity {
         pDialog.setMessage("Loading");
         pDialog.setCancelable(false);
         pDialog.show();
+    }
+
+    private void getMoreMessages() {
+        RainbowSdk.instance().im().markMessagesFromConversationAsRead(conversation);
+        RainbowSdk.instance().im().getMoreMessagesFromConversation(conversation, 9);
+        conversation.getMessages().registerChangeListener(m_changeListener);
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

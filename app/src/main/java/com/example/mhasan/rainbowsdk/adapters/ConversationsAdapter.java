@@ -108,10 +108,17 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         Log.d(TAG, "onBindViewHolder: "+unReadMsg);
 
         if (currentConversation.isRoomType()) {
+            int roomUnReadMsg=currentConversation.getUnreadMsgNb();
+            Log.d(TAG, "RoomunReadMsg: "+roomUnReadMsg);
             Room currentRoom = currentConversation.getRoom();
             holder.name.setText(currentRoom.getName());
             holder.profilePic.setImageResource(R.drawable.ic_group);
             holder.status.setVisibility(View.INVISIBLE);
+
+            if(roomUnReadMsg>0){
+                holder.unReadMsg.setText(String.valueOf(roomUnReadMsg));
+                holder.unReadMsg.setVisibility(View.VISIBLE);
+            }
         } else {
             holder.name.setText(contact.getFirstName() + " " + contact.getLastName());
             if ((contact.getPhoto()) != null) {

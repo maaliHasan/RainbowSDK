@@ -60,6 +60,7 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
             for (int i = 0; i < size; i++) {
                 Conversation conversation = (Conversation) conversations.get(i);
                 Log.d(TAG, "dataChanged: " + conversation.getLastMessage());
+                Log.d(TAG, "dataChanged: "+conversation.getUnreadMsgNb());
                 // conversation.registerChangeListener();
                 mConversationList.add(conversation);
             }

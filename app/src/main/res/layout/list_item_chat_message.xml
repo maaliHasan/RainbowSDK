@@ -29,25 +29,29 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/txtInfoLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/txtInfoLayout"
-            android:layout_gravity="right" >
+            android:layout_gravity="right"
+            android:layout_weight="2">
+
             <TextView
                 android:id="@+id/txtInfo"
                 android:layout_width="wrap_content"
-                android:layout_height="30sp"
+                android:layout_height="wrap_content"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="12sp"
+
                 />
 
             <ImageView
                 android:id="@+id/txtStatus"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
+                android:layout_marginLeft="10dp"
                 android:background="@drawable/ic_msg_is_read"
-                android:layout_alignParentRight="true"
-                />
+                android:layout_centerVertical="true"
+                 />
         </RelativeLayout>
 
     </LinearLayout>

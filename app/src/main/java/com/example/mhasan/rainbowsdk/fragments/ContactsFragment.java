@@ -86,9 +86,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
                 public void run() {
                     mContactRV.getRecycledViewPool().clear();
                    // mContactAD.notifyDataSetChanged();
-                 //   Log.d(TAG, "run: "+mContactList.size());
                     mContactAD.notifyItemRangeChanged(0, mContactList.size());
-                    //  getPendingSentInvitations();
                 }
             });
             mContactList.clear();
@@ -96,7 +94,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
             int size = arrayItemList.getCount();
             for (int i = 0; i < size; i++) {
                 Contact contact = (Contact) arrayItemList.get(i);
-                Log.d(TAG, "dataChanged: " + contact.getFirstName());
                 contact.registerChangeListener(m_contactListener);
                 mContactList.add(contact);
             }
@@ -122,7 +119,6 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
         mContactAD.setOnItemClickedListener(this);
         mContactRV.setAdapter(mContactAD);
         mContactRV.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //getPendingSentInvitations();
     }
 
     @Override

@@ -150,15 +150,11 @@ public class ChatAdapter extends BaseAdapter {
                 holder.txtStatus.setBackgroundResource(R.drawable.ic_msg_recived);
             }
 
-
-
         } else {
             holder.contentWithBG.setBackgroundResource(R.drawable.out_message_bg);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
             holder.contentWithBG.setLayoutParams(layoutParams);
-
-
             holder.contentTxtInfo.setGravity(Gravity.LEFT);
 
             LinearLayout.LayoutParams Rl = (LinearLayout.LayoutParams) holder.contentTxtInfo.getLayoutParams();
