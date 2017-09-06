@@ -115,6 +115,7 @@ public class ContactsFragment extends Fragment implements ContactsAdapter.OnItem
        // loadDialog();
         instance().contacts().getRainbowContacts().registerChangeListener(m_changeListener);
         mContactRV = getActivity().findViewById(contactList);
+        mContactRV.setItemAnimator(null);
         mContactAD = new ContactsAdapter(getActivity(), mContactList);
         mContactAD.setOnItemClickedListener(this);
         mContactRV.setAdapter(mContactAD);

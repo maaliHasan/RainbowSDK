@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {
-                instance().connection().signin("mhasan@asaltech.com", "Asal@123", new SigninResponseListener() {
+                instance().connection().signin("mhasan@asaltech.com","Asal@123",new SigninResponseListener() {
                     @Override
                     public void onSigninSucceeded() {
                         // You are now connected

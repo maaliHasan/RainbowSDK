@@ -37,6 +37,7 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
     public  static final String TAG=ConversationsFragment.class.getSimpleName();
     private ProgressDialog pDialog;
     private ConversationsAdapter mConversationAD;
+    private RecyclerView mConversationRV;
     private ArrayList<Conversation> mConversationList;
 
     private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
@@ -48,6 +49,7 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
                 @Override
                 public void run() {
                   Log.d(TAG, "run: "+mConversationList.size());
+                    mConversationRV.getRecycledViewPool().clear();
                     mConversationAD.notifyItemRangeChanged(0, mConversationList.size());
                     //mConversationAD.notifyDataSetChanged();
                 }
@@ -81,7 +83,8 @@ public class ConversationsFragment extends Fragment  implements ConversationsAda
         super.onViewCreated(view, savedInstanceState);
         loadDialog();
         RainbowSdk.instance().conversations().getAllConversations().registerChangeListener(m_changeListener);
-        RecyclerView mConversationRV = getActivity().findViewById(conversationList);
+        mConversationRV = getActivity().findViewById(conversationList);
+        mConversationRV.setItemAnimator(null);
         mConversationAD = new ConversationsAdapter(getActivity(), mConversationList);
         mConversationAD.setOnItemClickedListener(this);
         mConversationRV.setAdapter(mConversationAD);

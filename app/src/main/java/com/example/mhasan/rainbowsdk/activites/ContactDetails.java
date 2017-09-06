@@ -24,18 +24,15 @@ import com.ale.listener.IRainbowSentInvitationListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 
-import java.util.ListIterator;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.mhasan.rainbowsdk.R.id.linearLayout;
-import static com.neovisionaries.i18n.LanguageCode.ca;
-import static com.neovisionaries.i18n.LanguageCode.cu;
-import static com.neovisionaries.i18n.LanguageCode.la;
-import static com.neovisionaries.i18n.LanguageCode.lo;
+
 
 /**
  * Created by mhasan on 7/30/2017.
+ *
  */
 
 public class ContactDetails extends AppCompatActivity implements View.OnClickListener {
@@ -144,16 +141,10 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
 
         Bundle data = getIntent().getExtras();
          mContact = (ContactData) data.getParcelable("ContactData");
-//         Contact  contact = (Contact) RainbowSdk.instance().contacts().getContactFromCorporateId(mContact.corporateId);
-//        Log.d(TAG, "getContactData: "+mContact.corporateId);
-       //  contact.registerChangeListener(m_contactListener);
-      //  Log.d(TAG, "getContactData: " + mContact);
         boolean isRoster = Boolean.valueOf(mContact.isRoster);
 
         fullName.setText(mContact.fullName);
         jobTitle.setText(mContact.jobTitle);
-        //String userPresence=mContact.presence;
-
         presence.setText(mContact.presence);
         if ((mContact.profilePic) != null) {
             pic.setImageBitmap(mContact.profilePic);
