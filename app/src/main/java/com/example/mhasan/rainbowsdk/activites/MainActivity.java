@@ -1,5 +1,6 @@
 package com.example.mhasan.rainbowsdk.activites;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -33,11 +34,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ale.infra.application.RainbowContext;
 import com.ale.infra.contact.Contact;
 import com.ale.infra.contact.IRainbowContact;
 import com.ale.infra.contact.RainbowPresence;
 import com.ale.infra.list.ArrayItemList;
 import com.ale.listener.SigninResponseListener;
+import com.ale.listener.SignoutResponseListener;
 import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
@@ -69,6 +72,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView mViewPresence;
     private Contact mConnectedContact;
     private Contact mUpdatedConnectedContact;
+    private SignoutResponseListener m_signoutResponseListener = new SignoutResponseListener() {
+        @Override
+        public void onSignoutSucceeded() {
+            Intent signOutIntent = new Intent(getBaseContext(), HomeActivity.class);
+            startActivity(signOutIntent);
+        }
+
+        @Override
+        public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getBaseContext(),"SignOut Faild try Again ",Toast.LENGTH_LONG).show();
+
+                }
+            });
+
+
+        }
+    };
     private Contact.ContactListener m_contactListener = new Contact.ContactListener() {
 
         @Override
@@ -96,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        connectToRainbow();
-
-
+        getConnectedUserInfo();
+        String loginUser=   RainbowContext.getPlatformServices().getApplicationData().getUserLogin();
+        Log.d(TAG, "onCreate: "+loginUser);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.viewPagerLayout);
         mFragmentsContent = (RelativeLayout) findViewById(R.id.fragmentsContent);
 
@@ -126,8 +149,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Check to see which item was being clicked and perform appropriate action
                 switch (item.getItemId()) {
                     case R.id.logout:
-                        getPendingSentInvitations();
-                        Toast.makeText(getApplicationContext(), "logOut Selected", Toast.LENGTH_SHORT).show();
+//                        getPendingSentInvitations();
+                        RainbowSdk.instance().connection().signout(m_signoutResponseListener);
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
@@ -172,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final TabLayout TopTabLayout = (TabLayout) findViewById(R.id.tabs);
         TopTabLayout.setTabTextColors(ColorStateList.valueOf((getResources().getColor(R.color.colorPrimary))));
-        TopTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(),R.color.colorPrimary));
+        TopTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary));
         /*
       The {@link ViewPager} that will host the section contents.
      */
@@ -194,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TopTabLayout.getTabAt(0).setIcon(R.drawable.ic_conversation);
         TopTabLayout.getTabAt(1).setIcon(R.drawable.ic_contact);
 
-       // TopTabLayout.setVisibility(View.GONE);
+        // TopTabLayout.setVisibility(View.GONE);
 //        final TabLayout BttomTabLayout = (TabLayout)findViewById(R.id.tabs2);
 //        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_contact));
 //        BttomTabLayout.addTab(BttomTabLayout.newTab().setIcon(R.drawable.ic_conversation));
@@ -288,12 +311,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
 
         return actionBarDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
 
@@ -305,56 +322,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * one of the sections/tabs/pages.
      */
 
-    public void connectToRainbow() {
-        instance().setNotificationBuilder(getApplicationContext(), MainActivity.class,
-                0, // You can set it to 0 if you have no app icon
-                getString(R.string.app_name),
-                "Connect to the app",
-                Color.RED);
-        if (!instance().isInitialized()) {
-            instance().initialize(); // Will change in the future
-        }
-
-
-        instance().connection().start(new StartResponseListener() {
-            @Override
-            public void onStartSucceeded() {
-                instance().connection().signin("mhasan@asaltech.com","Asal@123",new SigninResponseListener() {
-                    @Override
-                    public void onSigninSucceeded() {
-                        // You are now connected
-                        // Do something on the thread UI
-                        Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
-                        getConnectedUserInfo();
-                    }
-
-                    @Override
-                    public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
-                        // Do something on the thread UI
-                        Log.d(TAG, "onRequestFailed: singnIn Failed");
-                    }
-                });
-            }
-
-            @Override
-            public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String err) {
-                // Do something
-            }
-        });
-
-    }
-
 
     @Override
     public void onBackPressed() {
         // super.onBackPressed();
         int fragmentsCount = getSupportFragmentManager().getBackStackEntryCount();
         Log.d(TAG, "onBackPressed1: " + fragmentsCount);
-        if (fragmentsCount ==1) {
+        if (fragmentsCount == 1) {
             getSupportFragmentManager().popBackStack();
             Log.d(TAG, "onBackPressed: " + fragmentsCount);
             mFragmentsContent.setVisibility(View.GONE);
-         mRelativeLayout.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
 
         }
         mRelativeLayout.setVisibility(View.VISIBLE);
@@ -363,7 +341,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause: ");
         super.onPause();
 
     }
@@ -376,9 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateConnectedUserInfo(Contact contact) {
-        Log.d(TAG, "updateConnectedUserInfo: " + mUpdatedConnectedContact.getPresence().getPresence());
         mUserName = contact.getFirstName() + " " + contact.getLastName();
-        Log.d(TAG, "updateConnectedUserInfo: " + contact.getFirstName() + " " + contact.getPresence());
         mEmail = contact.getLoginEmail();
         Bitmap mUserPic = contact.getPhoto();
         mNameText.setText(mUserName);
@@ -461,8 +436,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void getPendingSentInvitations() {
-//        Contact contact=new Contact();
-//        contact= (Contact) RainbowSdk.instance().contacts().getContactFromJabberId("c47e988b453b420b8806516979dece01@openrainbow.com");
         Log.d(TAG, "getPendingSentInvitations: ");
         List<IRainbowContact> pendingSentInvitations = RainbowSdk.instance().contacts().getPendingSentInvitations();
         Log.d(TAG, "getPendingSentInvitations: " + pendingSentInvitations.size());

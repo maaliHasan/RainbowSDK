@@ -34,6 +34,11 @@
     <string name="donotdist">Do not disturb</string>
     <string name="title_activity_search_by_name_contactas">SearchByNameContactasActivity</string>
     <string name="typeMessage">Enter your text here...</string>
-
-
+    <string name="lbl_forget_password">forgot your password?</string>
+    <string name="hint_email">e-mail address</string>
+    <string name="hint_password">password</string>
+    <string name="lbl_enter">enter</string>
+    <string name="rainbow">Rainbow</string>
+    <string name="official">Official</string>
+    <string name="sandbox">Sandbox</string>
 </resources>

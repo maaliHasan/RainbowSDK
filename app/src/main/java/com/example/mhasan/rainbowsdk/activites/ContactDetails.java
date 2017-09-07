@@ -1,6 +1,8 @@
 package com.example.mhasan.rainbowsdk.activites;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,14 +27,11 @@ import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 
 
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
 
 
 /**
  * Created by mhasan on 7/30/2017.
- *
  */
 
 public class ContactDetails extends AppCompatActivity implements View.OnClickListener {
@@ -42,9 +41,9 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
     ContactData mContact;
     private RelativeLayout invitationLayout;
     private ImageView addUserIcon;
-    private  TextView pendingLabel;
-    private   RelativeLayout.LayoutParams pendingLabelParams;
-    private   TextView invitationLabel;
+    private TextView pendingLabel;
+    private RelativeLayout.LayoutParams pendingLabelParams;
+    private TextView invitationLabel;
     private LinearLayout linearLayout;
     private ProgressDialog pDialog;
     public static final String TAG = ContactDetails.class.getSimpleName();
@@ -86,7 +85,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
             updateInvitationLayout(AFTER_ADD_USER);
             runOnUiThread(new Runnable() {
                 public void run() {
-                   Toast.makeText(getBaseContext(),"This User invitation has already been sent  in the last 3600 seconds, do not send email again",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "This User invitation has already been sent  in the last 3600 seconds, do not send email again", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -140,7 +139,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
         CircleImageView pic = (CircleImageView) findViewById(R.id.profile_pic);
 
         Bundle data = getIntent().getExtras();
-         mContact = (ContactData) data.getParcelable("ContactData");
+        mContact = (ContactData) data.getParcelable("ContactData");
         boolean isRoster = Boolean.valueOf(mContact.isRoster);
 
         fullName.setText(mContact.fullName);
@@ -156,7 +155,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
         linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-         invitationLayout = new RelativeLayout(this);
+        invitationLayout = new RelativeLayout(this);
         RelativeLayout.LayoutParams IRLParams = new RelativeLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         invitationLayout.setLayoutParams(IRLParams);
@@ -164,8 +163,8 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
         TextView inDivider = new TextView(this);
         inDivider.setId(View.generateViewId());
         addUserIcon = new ImageView(this);
-         invitationLabel = new TextView(this);
-         pendingLabel = new TextView(this);
+        invitationLabel = new TextView(this);
+        pendingLabel = new TextView(this);
         invitationLabel.setId(View.generateViewId());
 
         RelativeLayout.LayoutParams inLParams = new RelativeLayout.LayoutParams(
@@ -175,7 +174,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
         RelativeLayout.LayoutParams addUserIconParams = new RelativeLayout.LayoutParams(48, 48);
         addUserIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 
-         pendingLabelParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        pendingLabelParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         pendingLabelParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
         pendingLabel.setVisibility(View.GONE);
 
@@ -280,8 +279,10 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
             relativeLayout.addView(divider, dividerParams);
 
             icon.setImageResource(R.drawable.ic_email);
+            icon.setId(R.id.sendEmail);
             if (icon.getParent() != null)
                 ((ViewGroup) icon.getParent()).removeView(icon);
+            icon.setOnClickListener(this);
             relativeLayout.addView(icon, iconParams);
 
             if (relativeLayout.getParent() != null)
@@ -367,6 +368,16 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.addContact:
                 RainbowSdk.instance().contacts().addRainbowContactToRoster(id, mainEmail, mAddContactListener);
+                break;
+            case R.id.sendEmail:
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:"));
+//                String Name = name.getText().toString();
+//                intent.putExtra(Intent.EXTRA_SUBJECT, Name);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+                break;
 
 
         }
@@ -384,7 +395,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
                 addUserIcon.setId(R.id.addContact);
                 addUserIcon.setImageResource(R.drawable.ic_add_user);
                 break;
-            case AFTER_ADD_USER :
+            case AFTER_ADD_USER:
                 addUserIcon.setVisibility(View.GONE);
                 pendingLabel.setText("pending");
                 pendingLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -392,7 +403,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
                 if (pendingLabel.getParent() != null)
                     ((ViewGroup) pendingLabel.getParent()).removeView(pendingLabel);
                 invitationLayout.addView(pendingLabel, pendingLabelParams);
-                Log.d(TAG, "updateInvitationLayout: "+pendingLabel.getText());
+                Log.d(TAG, "updateInvitationLayout: " + pendingLabel.getText());
                 break;
         }
 

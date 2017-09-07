@@ -2,5 +2,6 @@
 <resources>
     <item type="id" name="addContact" />
     <item type="id" name="removeContact" />
+    <item type="id" name="sendEmail"/>
 
 </resources>
