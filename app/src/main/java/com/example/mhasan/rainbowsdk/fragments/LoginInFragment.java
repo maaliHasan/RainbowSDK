@@ -14,15 +14,12 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.ale.listener.SigninResponseListener;
 import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.activites.MainActivity;
-
 import static com.ale.rainbowsdk.RainbowSdk.instance;
-
 
 /**
  * Created by mhasan on 9/6/2017.
@@ -73,7 +70,7 @@ public class LoginInFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    public void connectToRainbow(final String email, final String password, final String accountType) {
+    public  void connectToRainbow(final String email, final String password, final String accountType) {
         instance().setNotificationBuilder(getActivity().getApplicationContext(), MainActivity.class,
                 0, // You can set it to 0 if you have no app icon
                 getString(R.string.app_name),

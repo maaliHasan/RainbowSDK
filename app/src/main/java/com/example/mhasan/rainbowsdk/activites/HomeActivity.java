@@ -9,38 +9,39 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.ale.infra.application.RainbowContext;
-import com.ale.infra.contact.Contact;
+import com.ale.listener.SigninResponseListener;
 import com.ale.listener.StartResponseListener;
 import com.ale.rainbowsdk.RainbowSdk;
 import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.fragments.LoginInFragment;
 
-import static com.ale.infra.application.RainbowContext.getPlatformServices;
 import static com.ale.rainbowsdk.RainbowSdk.instance;
-import static com.neovisionaries.i18n.LanguageAlpha3Code.run;
-import static com.neovisionaries.i18n.LanguageCode.lo;
+import static java.security.AccessController.getContext;
 
 /**
  * Created by mhasan on 9/6/2017.
+ *
  */
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = HomeActivity.class.getSimpleName();
     private String mConnectedUser;
+    private String mConnectedUserPassword ;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        // getConnectedUser();
+         getConnectedUser();
         //getSupportFragmentManager().getBackStackEntryCount() == 0 ||
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            showFragment();
-        } else {
-            startActivity(new Intent(getBaseContext(), MainActivity.class));
-        }
+//        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+//            showFragment();
+//        } else {
+//            startActivity(new Intent(getBaseContext(), MainActivity.class));
+//        }
 
     }
 
@@ -62,22 +63,15 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onStartSucceeded() {
                 mConnectedUser = instance().contacts().getUserLoginInCache();
+                mConnectedUserPassword=instance().contacts().getUserPasswordInCache();
                 Log.d(TAG, "run: " + mConnectedUser);
                 if (mConnectedUser == null) {
                     showFragment();
                 } else {
-                    startActivity(new Intent(getBaseContext(), MainActivity.class));
+                connectToRainbow(mConnectedUser,mConnectedUserPassword,"official");
+
                 }
 
-//                runOnUiThread(new Runnable(){
-//
-//                    @Override
-//                    public void run() {
-//
-//
-//
-//                    }
-//                });
             }
         });
 
@@ -92,4 +86,57 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
+    public  void connectToRainbow(final String email, final String password, final String accountType) {
+        instance().connection().start(new StartResponseListener() {
+            @Override
+            public void onStartSucceeded() {
+                switch (accountType) {
+                    case "official":
+                        instance().connection().signin(email, password, new SigninResponseListener() {
+                            @Override
+                            public void onSigninSucceeded() {
+                                // You are now connected
+                                // Do something on the thread UI
+                                Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
+                                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
+                                // Do something on the thread UI
+                                new LoginInFragment();
+                            }
+                        });
+                        break;
+                    case "sandbox":
+                        instance().connection().signin(email, password, "sandbox.openrainbow.com", new SigninResponseListener() {
+                            @Override
+                            public void onSigninSucceeded() {
+                                // You are now connected
+                                // Do something on the thread UI
+                                Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
+                                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                                startActivity(intent);
+
+                            }
+
+                            @Override
+                            public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
+                                // Do something on the thread UI
+                                new LoginInFragment();
+                            }
+                        });
+                }
+            }
+
+            @Override
+            public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String err) {
+                // Do something
+            }
+        });
+
+    }
+
 }
