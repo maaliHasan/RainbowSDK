@@ -3,5 +3,7 @@
     <item type="id" name="addContact" />
     <item type="id" name="removeContact" />
     <item type="id" name="sendEmail"/>
-
+    <item type="id" name="audioCall"/>
+    <item type="id" name="profMobile"/>
+    <item type="id" name="profPhone"/>
 </resources>

@@ -41,4 +41,12 @@
     <string name="rainbow">Rainbow</string>
     <string name="official">Official</string>
     <string name="sandbox">Sandbox</string>
+    <string name="pending">pending</string>
+    <string name="addContact">Add Contact to my Network</string>
+    <string name="audioCall">Audio-Call</string>
+    <string name="profPhone">Professional-phone</string>
+    <string name="profMobile">Professional-mobile</string>
+    <string name="homeEmail">Home-Email</string>
+    <string name="workEmail">Work-Email</string>
+    <string name="removeContact">Remove Contact from my Network</string>
 </resources>

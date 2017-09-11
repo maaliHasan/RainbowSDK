@@ -71,14 +71,6 @@ public class LoginInFragment extends Fragment implements View.OnClickListener {
 
 
     public  void connectToRainbow(final String email, final String password, final String accountType) {
-        instance().setNotificationBuilder(getActivity().getApplicationContext(), MainActivity.class,
-                0, // You can set it to 0 if you have no app icon
-                getString(R.string.app_name),
-                "Connect to the app",
-                Color.RED);
-        if (!instance().isInitialized()) {
-            instance().initialize(); // Will change in the future
-        }
         instance().connection().start(new StartResponseListener() {
             @Override
             public void onStartSucceeded() {

@@ -1,12 +1,15 @@
 package com.example.mhasan.rainbowsdk.activites;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,8 +21,6 @@ import android.widget.TextView;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.Toast;
 
-import com.ale.infra.contact.Contact;
-import com.ale.infra.contact.RainbowPresence;
 import com.ale.infra.http.adapter.concurrent.RainbowServiceException;
 import com.ale.listener.IRainbowContactManagementListener;
 import com.ale.listener.IRainbowSentInvitationListener;
@@ -29,15 +30,18 @@ import com.example.mhasan.rainbowsdk.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.neovisionaries.i18n.LanguageAlpha3Code.bre;
+
 
 /**
  * Created by mhasan on 7/30/2017.
+ *
  */
 
 public class ContactDetails extends AppCompatActivity implements View.OnClickListener {
-    private Boolean isInvitationSent = false;
     public final static String AFTER_Delete_USER = "deleted";
     public final static String AFTER_ADD_USER = "added";
+    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE=0x0000000;
     ContactData mContact;
     private RelativeLayout invitationLayout;
     private ImageView addUserIcon;
@@ -46,34 +50,15 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
     private TextView invitationLabel;
     private LinearLayout linearLayout;
     private ProgressDialog pDialog;
+    private String phoneNum;
+    private String mobileNum;
     public static final String TAG = ContactDetails.class.getSimpleName();
-    private Contact.ContactListener m_contactListener = new Contact.ContactListener() {
-
-        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-        @Override
-        public void contactUpdated(Contact contact) {
-            Log.d(TAG, "contactUpdated: " + contact.getFirstName());
-            // pDialog.dismiss();
-
-        }
-
-        @Override
-        public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
-            Log.d(TAG, "onPresenceChanged: " + contact.getFirstName() + "  " + rainbowPresence.getPresence());
-        }
-
-        @Override
-        public void onActionInProgress(boolean b) {
-
-        }
-    };
-
     private IRainbowSentInvitationListener mAddContactListener = new IRainbowSentInvitationListener() {
 
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
         @Override
         public void onInvitationSentSuccess(String s) {
-            isInvitationSent = true;
+            Boolean isInvitationSent = true;
             updateInvitationLayout(AFTER_ADD_USER);
             Log.d(TAG, "onInvitationSentSuccess: " + s);
         }
@@ -120,16 +105,9 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_deatails);
-        //loadDialog();
         getContactData();
     }
 
-    public void loadDialog() {
-        pDialog = new ProgressDialog(getBaseContext());
-        pDialog.setMessage("Loading");
-        pDialog.setCancelable(false);
-        pDialog.show();
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void getContactData() {
@@ -139,7 +117,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
         CircleImageView pic = (CircleImageView) findViewById(R.id.profile_pic);
 
         Bundle data = getIntent().getExtras();
-        mContact = (ContactData) data.getParcelable("ContactData");
+        mContact = data.getParcelable("ContactData");
         boolean isRoster = Boolean.valueOf(mContact.isRoster);
 
         fullName.setText(mContact.fullName);
@@ -185,14 +163,14 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
 
 
         if (!isRoster) {
-            invitationLabel.setText("Add Contact to my Network");
+            invitationLabel.setText(R.string.addContact);
             invitationLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
             addUserIcon.setOnClickListener(this);
             addUserIcon.setId(R.id.addContact);
             addUserIcon.setImageResource(R.drawable.ic_add_user);
 
         } else {
-            invitationLabel.setText("Remove Contact from my Network");
+            invitationLabel.setText(R.string.removeContact);
             invitationLabel.setTextColor(getResources().getColor(R.color.red));
             addUserIcon.setId(R.id.removeContact);
             addUserIcon.setOnClickListener(this);
@@ -257,9 +235,9 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
             emailValueParams.addRule(RelativeLayout.BELOW, workEmail.getId());
 
             if (i == 0) {
-                workEmail.setText("Work-Email");
+                workEmail.setText(R.string.workEmail);
             } else {
-                workEmail.setText("Home-Email");
+                workEmail.setText(R.string.homeEmail);
             }
 
             workEmail.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -321,11 +299,17 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
             emailValueParams.addRule(RelativeLayout.BELOW, phoneLabel.getId());
 
             if (i == 0) {
-                phoneLabel.setText("Professional-mobile");
+                mobileNum = mContact.phoneNumbers.get(i).toString();
+                phoneLabel.setText(R.string.profMobile);
                 icon.setImageResource(R.drawable.ic_phone);
+                icon.setId(R.id.profMobile);
+                icon.setOnClickListener(this);
             } else {
-                phoneLabel.setText("Professional-phone");
+                phoneNum = mContact.phoneNumbers.get(i).toString();
+                phoneLabel.setText(R.string.profPhone);
                 icon.setImageResource(R.drawable.ic_mobile);
+                icon.setId(R.id.profPhone);
+                icon.setOnClickListener(this);
             }
 
             phoneLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -355,6 +339,36 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
 
         }
 
+        RelativeLayout audioLayout = new RelativeLayout(this);
+        RelativeLayout.LayoutParams RLParams = new RelativeLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        audioLayout.setLayoutParams(RLParams);
+        TextView audioCall = new TextView(this);
+        ImageView audioIcon = new ImageView(this);
+
+        RelativeLayout.LayoutParams audioIconParams = new RelativeLayout.LayoutParams(48, 48);
+        audioIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+
+        RelativeLayout.LayoutParams audioCallParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        audioCall.setText(R.string.audioCall);
+        audioCall.setTextColor(getResources().getColor(R.color.colorPrimary));
+        audioIcon.setImageResource(R.drawable.ic_audio_call);
+        audioIcon.setId(R.id.audioCall);
+
+        if (audioCall.getParent() != null)
+            ((ViewGroup) audioCall.getParent()).removeView(audioCall);
+        audioLayout.addView(audioCall, audioCallParams);
+
+        if (audioIcon.getParent() != null)
+            ((ViewGroup) audioIcon.getParent()).removeView(audioIcon);
+        audioIcon.setOnClickListener(this);
+        audioLayout.addView(audioIcon, audioIconParams);
+
+        if (audioLayout.getParent() != null)
+            ((ViewGroup) audioLayout.getParent()).removeView(audioLayout);
+        linearLayout.addView(audioLayout);
     }
 
     @Override
@@ -372,24 +386,48 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
             case R.id.sendEmail:
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("mailto:"));
-//                String Name = name.getText().toString();
-//                intent.putExtra(Intent.EXTRA_SUBJECT, Name);
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
                 break;
-
-
+            case R.id.profMobile:
+                Log.d(TAG, "onClick: "+mobileNum);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + mobileNum));
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.CALL_PHONE},MY_PERMISSIONS_REQUEST_CALL_PHONE
+                           );
+                    return;
+                }
+                startActivity(callIntent);
+                break;
+            case R.id.profPhone:
+                Intent callIntent2 = new Intent(Intent.ACTION_CALL);
+                callIntent2.setData(Uri.parse("tel:" + phoneNum));
+                startActivity(callIntent2);
+                break;
+            case  R.id.audioCall:
+                Log.d(TAG, "onClick: "+"audio clicked");
+                Intent audioIntent= new Intent(getBaseContext(),audioCallActivity.class);
+                startActivity(audioIntent);
+                break;
         }
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     void updateInvitationLayout(String status) {
-        //  loadDialog();
         switch (status) {
             case AFTER_Delete_USER:
-                invitationLabel.setText("Add Contact to my Network");
+                invitationLabel.setText(R.string.addContact);
                 invitationLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
                 addUserIcon.setOnClickListener(this);
                 addUserIcon.setId(R.id.addContact);
@@ -397,7 +435,7 @@ public class ContactDetails extends AppCompatActivity implements View.OnClickLis
                 break;
             case AFTER_ADD_USER:
                 addUserIcon.setVisibility(View.GONE);
-                pendingLabel.setText("pending");
+                pendingLabel.setText(R.string.pending);
                 pendingLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
                 pendingLabel.setVisibility(View.VISIBLE);
                 if (pendingLabel.getParent() != null)

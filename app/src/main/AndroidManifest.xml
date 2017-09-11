@@ -10,6 +10,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -25,10 +29,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
                 <data android:scheme="mailto" />
+                <action android:name="android.intent.action.CALL"/>
+                <data android:scheme="tel"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".activites.ChatActivity" />
+        <activity android:name=".activites.audioCallActivity"/>
         <activity android:name=".activites.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
         <intent-filter>

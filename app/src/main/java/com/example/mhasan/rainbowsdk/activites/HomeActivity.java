@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ale.listener.SigninResponseListener;
 import com.ale.listener.StartResponseListener;
@@ -18,7 +17,7 @@ import com.example.mhasan.rainbowsdk.R;
 import com.example.mhasan.rainbowsdk.fragments.LoginInFragment;
 
 import static com.ale.rainbowsdk.RainbowSdk.instance;
-import static java.security.AccessController.getContext;
+
 
 /**
  * Created by mhasan on 9/6/2017.
@@ -36,16 +35,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
          getConnectedUser();
-        //getSupportFragmentManager().getBackStackEntryCount() == 0 ||
-//        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-//            showFragment();
-//        } else {
-//            startActivity(new Intent(getBaseContext(), MainActivity.class));
-//        }
 
     }
 
     public void getConnectedUser() {
+        Log.d(TAG, "getConnectedUser: "+"get connected user");
         instance().setNotificationBuilder(getApplicationContext(), MainActivity.class,
                 0, // You can set it to 0 if you have no app icon
                 getString(R.string.app_name),
@@ -65,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
                 mConnectedUser = instance().contacts().getUserLoginInCache();
                 mConnectedUserPassword=instance().contacts().getUserPasswordInCache();
                 Log.d(TAG, "run: " + mConnectedUser);
-                if (mConnectedUser == null) {
+                if (mConnectedUser.equals(null) ||mConnectedUser.equals("")) {
                     showFragment();
                 } else {
                 connectToRainbow(mConnectedUser,mConnectedUserPassword,"official");
@@ -79,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void showFragment() {
+        Log.d(TAG, "showFragment: "+"showFragment");
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         LoginInFragment loginInFragment = new LoginInFragment();

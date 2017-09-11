@@ -23,7 +23,8 @@
             android:text="@string/rainbow"
             android:textSize="30sp"
             android:textStyle="bold"
-            android:layout_marginTop="30dp"/>
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="30dp"/>
 
         <EditText
             android:id="@+id/et_email"
