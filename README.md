@@ -14,7 +14,7 @@ Its powerfull APIs enable you to create the best Android applications that conne
 This documentation will help you to use it.
 
 
-## Rainbow developer account
+## Rainbow developper account
 ---
 
 Your need a Rainbow **developer** account in order to use the Rainbow SDK for Android
@@ -508,29 +508,34 @@ To differenciate the two types of conversation, you can use the **isRoomType** m
 	}
 	
   ``` 
-  ### Listening to receipt of message read
- ```java
- /** 
- * In progress
- ***/
- ```
+  ### Send a message to a conversation 
+  
+  To send a message to a conversation, you just have to call the API  `sendMessageToConversation()` with the **IRainbowConversation**. The GUI is updated by the **IItemListChangeListener** above.
+  ```java
+    RainbowSdk.instance().im().sendMessageToConversation(m_conversation, "your message text);
+  ```
+  
+  ###  Listening to incoming messages
+ Since you store the conversation you got from `getAllConversation()` method in ArrayItemList you will be able to listen to any conversation update which include listening for incoming messages .
+ So when a new message is received, the  **IItemListChangeListener**  detect  that and update the  conversation automatically. 
+When receiving a  message, the SDK for Android automatically send a receipt of type received to your recipient.
+folowing is a table with of recipent types 
+| Receipt  constant | value | Meaning |
+|------------------ | ----- | ------- |
+| **SENT** | 0 |server not received message yet(E.g .  you have no connection)|
+| **SENT_SERVER_RECEIVED** | 1 | client not connected|
+| **SENT_CLIENT_RECEIVED** | 2 | client connected, just received it|
+| **SENT_CLIENT_READ** | 3 | client read the message |
+| **RECEIVED** | 4 | When receiving a message, SDK for Android sends it automatically  |
+| **READ** | 5 |sent when client call `markMessagesFromConversationAsRead()`   |
+
+
   ### Marking a message as read
+  When receiving a message, the SDK for Android automatically send a receipt of type received to your recipient. On your own, you need to send a receipt of type read when the message received has been read.
+To send a receipt of type read, you need to call the API markMessagesFromConversationAsRead() with the IRainbowConversation as method parameter like in the following
+
  ```java
- /** 
- * In progress
- ***/
- ```
-  ###  Listening to receipt of message received
- ```java
- /** 
- * In progress
- ***/
- ```
-  ###   Listening to receipt of message read
- ```java
- /** 
- * In progress
- ***/
+ainbowSdk.instance().im().markMessagesFromConversationAsRead(m_conversation);
  ```
 
 
@@ -550,23 +555,20 @@ Here is the list of features supported by the Rainbow-Android-SDK
 ### Contacts
 
 - Get the list of contacts
-
 - Get contact individually
-
 - Managing contacts updates
-
 - Displaying contact full information
-
 - Searching for a contact by name
-
 - Adding the contact to the user network
-
 - Removing the contact from the user network
 
 ### Presence
 
 - Get the presence of contacts
-
 - Set the user connected presence
 
+### Conversation
 
+-  Retrieving a conversation from a contact .
+- Send a message to a conversation . 
+- Marking a message as read .
