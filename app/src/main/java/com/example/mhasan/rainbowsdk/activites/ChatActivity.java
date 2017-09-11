@@ -174,12 +174,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-
-    private void newScroll() {
-        messagesContainer.setSelection((messagesContainer.getCount()) -1);
-        Log.d(TAG, "newScroll: "+ messagesContainer.getTop());
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
