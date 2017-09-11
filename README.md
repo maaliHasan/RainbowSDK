@@ -211,9 +211,11 @@ Here is a list of the events that you can subscribe on:
 | **IRainbowGetConversationListener** | Fired when the conversation is being called|
 
 
+
 ## Contacts
 ---
-You can take a look to [contact files ](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/tree/master/src/main/java/com/ale/infra/contact) provided in SDK src files  to find all what you need to know about Rainbow Contact object . For example : contact name , Ids , email address ,  phone numbers and more
+
+You can take a look to [contact files ](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/tree/master/src/main/java/com/ale/infra/contact) provided in SDK src files  to find all what you need to know about Rainbow Contact object .E.g: contact name , Ids , email address ,  phone numbers and more
 
 ### Retrieve the list of contacts
 
@@ -473,6 +475,7 @@ Notice: Values other than the ones listed will not be taken into account.
 
 To retrieve all active conversations (peer to peer conversations and bubles, you can call the method getAllConversations() but you have to **listen to the conversations list changes**. See more in **[ArrayItemList.md](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/blob/master/docs/tutorials/ArrayItemList.md)**.  
 You can do it by creating an IItemListChangeListener in the class which is listening and then register.
+
 ```java
     public class MyFragmentWhichIsListeningConversations extends Fragment {
 		private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
@@ -510,16 +513,19 @@ To differenciate the two types of conversation, you can use the **isRoomType** m
   ``` 
   ### Send a message to a conversation 
   
-  To send a message to a conversation, you just have to call the API  `sendMessageToConversation()` with the **IRainbowConversation**. The GUI is updated by the **IItemListChangeListener** above.
+  To send a message to a conversation, you just have to call the API  `sendMessageToConversation()` with the **IRainbowConversation**. 	   The GUI is updated by the **IItemListChangeListener** above.
+  
   ```java
     RainbowSdk.instance().im().sendMessageToConversation(m_conversation, "your message text);
   ```
   
   ###  Listening to incoming messages
- Since you store the conversation you got from `getAllConversation()` method in ArrayItemList you will be able to listen to any conversation update which include listening for incoming messages .
+  
+ Since you store the conversation you got from `getAllConversation()` method in ArrayItemList you will be able to listen to any    	conversation update which include listening for incoming messages .
  So when a new message is received, the  **IItemListChangeListener**  detect  that and update the  conversation automatically. 
 When receiving a  message, the SDK for Android automatically send a receipt of type received to your recipient.
 folowing is a table with of recipent types 
+
 | Receipt  constant | value | Meaning |
 |------------------ | ----- | ------- |
 | **SENT** | 0 |server not received message yet(E.g .  you have no connection)|
@@ -530,13 +536,17 @@ folowing is a table with of recipent types
 | **READ** | 5 |sent when client call `markMessagesFromConversationAsRead()`   |
 
 
+
   ### Marking a message as read
+  
   When receiving a message, the SDK for Android automatically send a receipt of type received to your recipient. On your own, you need to send a receipt of type read when the message received has been read.
 To send a receipt of type read, you need to call the API markMessagesFromConversationAsRead() with the IRainbowConversation as method parameter like in the following
+
 
  ```java
 ainbowSdk.instance().im().markMessagesFromConversationAsRead(m_conversation);
  ```
+
 
 
 ## Features provided
