@@ -501,7 +501,7 @@ ainbowSdk.instance().im().markMessagesFromConversationAsRead(m_conversation);
  ```
 
 ### List of events
-
+---
 Here is a list of the events that you can subscribe on:
 
 
