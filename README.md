@@ -4,8 +4,6 @@ ALE Rainbow SDK for Android
 
 Welcome to the Alcatel-Lucent Enterprise **Rainbow Software Development Kit for Android**!
 
-The Alcatel-Lucent Enterprise (ALE) Rainbow Software Development Kit (SDK) is an npm package for connecting your Android application to Rainbow.
-
 
 ## Preamble
 ---
@@ -20,17 +18,6 @@ This documentation will help you to use it.
 Your need a Rainbow **developer** account in order to use the Rainbow SDK for Android
 
 Please contact the Rainbow [support](mailto:support@openrainbow.com) team if you need one.
-
-
-
-## Install
----
-
-1. Download the framework SDK zip file or just clone the repository  from [Rainbow-CPaaS githup repo](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK)
-2. Unzip and see next steps for configrautions  and setup the enviroment.
-
-
-
 
 # Configuration
 ---------
