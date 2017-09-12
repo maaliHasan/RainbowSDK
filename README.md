@@ -39,13 +39,13 @@ Please contact the Rainbow [support](mailto:support@openrainbow.com) team if you
 RainbowSDK is using the Android SDK **version 16** so you must set it to the minimal in your app.  
 With gradle:
 ```java
-	android {
+android {
+	[...]
+	defaultConfig {
 		[...]
-		defaultConfig {
-			[...]
-			minSdkVersion 16
-		}
+		minSdkVersion 16
 	}
+}
 ```
 ### Step 2 : Add the gradle dependency to the Rainbow SDK for Android
 In your **app\build.gradle**, add these lines:
@@ -75,14 +75,14 @@ And **Sync Now**.
 
 #### Step 1 : Add the following permissions in your **AndroidManifest.xml**
 ```java
-	<uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<uses-permission android:name="android.permission.READ_PROFILE" />
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.READ_CONTACTS"/>
+<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 ```
 ### Step 2: Add an Application class
 
@@ -101,21 +101,16 @@ Go to **AndroidManifest.xml** and add the reference:
 In the **onCreate()** of your application, you have to set a notificationBuilder with different parameters and call the initialize method.
 
 
+```java
+ @Override
+ public void onCreate() {
+	 super.onCreate();
+	RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),YourActivity.class,the_icon_app_id,getString(R.string.app_name),"Connect to the app",Color.RED);
+	
+	RainbowSdk.instance().initialize(); // Will change in the future
+}
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-		RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),
-													YourActivity.class,
-													the_icon_app_id, // You can set it to 0 if you have no app icon
-													getString(R.string.app_name),
-													"Connect to the app",
-													Color.RED);
-		RainbowSdk.instance().initialize(); // Will change in the future
-    }
-
-
+```
 
 
 ## Usage
@@ -129,87 +124,47 @@ To connect to Rainbow, you have to:
 * start the rainbow service
 * and then use the sign in method when the service is ready.
 
-**NB: The start service method is temporary and will probably be hidden later.**
 ```java
 
-	RainbowSdk.instance().connection().start(new StartResponseListener() {
-		@Override
-		public void onStartSucceeded() {
-			RainbowSdk.instance().connection().signin("@email", "password", new SigninResponseListener() {
-				@Override
-				public void onSigninSucceeded() {
-					// You are now connected
-					// Do something on the thread UI
-				}
-				@Override
-				public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
-					// Do something on the thread UI
-				}
-			});
-		}
-		@Override
-		public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String err) {
-			// Do something
-		}
-	});
-	
+RainbowSdk.instance().connection().start(new StartResponseListener() {
+       @Override
+        public void onStartSucceeded() {
+            RainbowSdk.instance().connection().signin("@email", "password", new SigninResponseListener() {
+                @Override
+                public void onSigninSucceeded() {
+                    // You are now connected
+                    // Do something on the thread UI
+                }
+                @Override
+                public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
+                    // Do something on the thread UI
+                }
+            });
+        }
+        @Override
+        public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String err) {
+            // Do something
+        } 
+});
+
 ```
 You can also call the *signin* method with the host you want to connect on (example: "sandbox.openrainbow.com"): 
+
 ```java
-	RainbowSdk.instance().connection().signin("@email", "password", "host", new SigninResponseListener() {
-		@Override
-		public void onSigninSucceeded() {
-			// You are now connected
-			// Do something on the thread UI
-		}
-		@Override
-		public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
-			// Do something on the thread UI
-		}
-	});
-```
+RainbowSdk.instance().connection().signin("@email", "password", "host", new SigninResponseListener() {
+	@Override
+        public void onSigninSucceeded() {
+            // You are now connected
+            // Do something on the thread UI
+        }
+        @Override
+        public void onRequestFailed(RainbowSdk.ErrorCode errorCode, String s) {
+            // Do something on the thread UI
+        }
+ ```
 **Note**: Do not forget to start the service before.  
 **Note**: If you don't fill the host, the last will be used. If it is the first time (you don't have a last), the default value is the production server ("openrainbow.com").
 That's all! Your application should be connected to Rainbow, congratulation!
-
-## Events
----
-
-### Listen to events
-
-Once you have connected To Rainbow and start  the rainbow service  you will begin receiving events from the SDK.
-Here is an example for listening when the SDK is ready to be used (once the connection is successfull to Rainbow):
-
-```java
-...
-  @Override
-  public void onSigninSucceeded() {
-      // You are now connected
-      // Do something on the thread UI
-        Log.d(TAG, "onSigninSucceeded: singnIn Succeesed");
-        }
-
-
-```
-
-
-### List of events
-
-Here is a list of the events that you can subscribe on:
-
-
-| Name | Description |
-|------|------------|
-| **SigninResponseListener** | Fired when you try to connect to Rainbow and do signin |
-| **IContactListener** | Fired  when contact has been updated |
-| **IRainbowInvitationManagementListener** | Fired when invitation is being accepted or declined |
-| **IRainbowSentInvitationListener** | Fired when invitation is being sent |
-| **IContactSearchListener** | Fired when you search for contact |
-| **IRainbowContactManagementListener** | Fired when you a contact is being  removed  from  roster list |
-| **IRainbowImListener** | Fired when a new message is received for a given conversation. |
-| **IRainbowConversationsListener** | fired when the list of conversations has changed. |
-| **IRainbowGetConversationListener** | Fired when the conversation is being called|
-
 
 
 ## Contacts
@@ -226,31 +181,30 @@ You can take a look to [contact files ](https://github.com/Rainbow-CPaaS/Rainbow
 ```
  **But**  you have to listen to the contacts list changes. See more in [ArrayItemList](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/blob/master/docs/tutorials/ArrayItemList.md) You can do it by creating an IItemListChangeListener in the class which is listening and then register as follows .
  ```java
-   
-public class ContactsFragment extends Fragment  {
+ public class ContactsFragment extends Fragment {
     public static final String TAG = ContactsFragment.class.getSimpleName();
-        private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
+    private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
         @Override
         public void dataChanged() {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                // Do something on the thread UI ,For example :here Im updating my Contcat Adpter 
-                  mContactAD.notifyDataSetChanged();
-                                 }
+                    // Do something on the thread UI ,For example :here Im updating my Contcat Adpter 
+                    mContactAD.notifyDataSetChanged();
+                }
             });
-       
+
             ArrayItemList arrayItemList = instance().contacts().getRainbowContacts();
-                     }
-           
-        };
-    
+        }
+
+    };
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         instance().contacts().getRainbowContacts().registerChangeListener(m_changeListener);
-        }
+    }
 
     @Override
     public void onDestroyView() {
@@ -259,7 +213,6 @@ public class ContactsFragment extends Fragment  {
     }
 
 }
-
  ```
 Note: This is the fixed list of contacts of the connected user.
 
@@ -546,6 +499,23 @@ To send a receipt of type read, you need to call the API markMessagesFromConvers
  ```java
 ainbowSdk.instance().im().markMessagesFromConversationAsRead(m_conversation);
  ```
+
+### List of events
+
+Here is a list of the events that you can subscribe on:
+
+
+| Name | Description |
+|------|------------|
+| **SigninResponseListener** | Fired when you try to connect to Rainbow and do signin |
+| **IContactListener** | Fired  when contact has been updated |
+| **IRainbowInvitationManagementListener** | Fired when invitation is being accepted or declined |
+| **IRainbowSentInvitationListener** | Fired when invitation is being sent |
+| **IContactSearchListener** | Fired when you search for contact |
+| **IRainbowContactManagementListener** | Fired when you a contact is being  removed  from  roster list |
+| **IRainbowImListener** | Fired when a new message is received for a given conversation. |
+| **IRainbowConversationsListener** | fired when the list of conversations has changed. |
+| **IRainbowGetConversationListener** | Fired when the conversation is being called|
 
 
 
