@@ -61,11 +61,11 @@ With gradle:
 
 ```java
 android {
-	[...]
-	defaultConfig {
-		[...]
-		minSdkVersion 16
-	}
+    [...]
+    defaultConfig {
+        [...]
+        minSdkVersion 16
+    }
 }
 ```
 
@@ -73,19 +73,19 @@ android {
 In your **app\build.gradle**, add these lines:
 
 ```java
-	allprojects {
-	    repositories {
-	        [...]
-	        maven { url "https://jitpack.io" }
-	    }
-	}
+    allprojects {
+        repositories {
+            [...]
+            maven { url "https://jitpack.io" }
+        }
+    }
 
-	[...]
+    [...]
 
-	dependencies {
-		[...]
-		compile 'com.github.Rainbow-CPaaS:Rainbow-Android-SDK:1.29.0'
-	}
+    dependencies {
+        [...]
+        compile 'com.github.Rainbow-CPaaS:Rainbow-Android-SDK:1.29.0'
+    }
         
 ```
 And **Sync Now**.
@@ -141,15 +141,15 @@ These information allow to identify the application you are developping. For mor
 ```java
  @Override
  public void onCreate() {
-	 super.onCreate();
-	RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),
-						     YourActivity.class,
-						     the_icon_app_id,         // You can set it to 0 if you have no app icon
-						     getString(R.string.app_name),
-						    "Connect to the app",
-						    Color.RED);
-	
-       RainbowSdk.instance().initialize("applicationId", "secretKey"); 
+     super.onCreate();
+    RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),
+                                                YourActivity.class,
+                                                the_icon_app_id,         // You can set it to 0 if you have no app icon
+                                                getString(R.string.app_name),
+                                               "Connect to the app",
+                                                Color.RED);
+    
+    RainbowSdk.instance().initialize("applicationId", "secretKey"); 
 }
 
 ```
@@ -164,11 +164,11 @@ However, when you are developping, you may want to connect on the Developer Sand
     public void onCreate() {
         super.onCreate();
         RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),
-              					     YourActivity.class,
-               					     the_icon_app_id,      // You can set it to 0 if you have no app icon
-            					     getString(R.string.app_name),
-              					    "Connect to the app",
-              					    Color.RED);
+                                                    YourActivity.class,
+                                                    the_icon_app_id,      // You can set it to 0 if you have no app icon
+                                                    getString(R.string.app_name),
+                                                   "Connect to the app",
+                                                    Color.RED);
         RainbowSdk.instance().initialize();   
     }
    
@@ -178,13 +178,11 @@ However, when you are developping, you may want to connect on the Developer Sand
 That's all! Your Android application is ready for connecting to Rainbow!
 
 
-## Usage
-Connect to Rainbow
-==
+## Connect to Rainbow
 
 ---------
-You need to have a valid Rainbow account to do that.
-To connect to Rainbow, you have to:
+
+You need to have a valid Rainbow account to do that.To connect to Rainbow, you have to:
 
 * start the rainbow service
 * and then use the sign in method when the service is ready.
@@ -217,7 +215,7 @@ You can also call the *signin* method with the host you want to connect on (exam
 
 ```java
 RainbowSdk.instance().connection().signin("@email", "password", "host", new SigninResponseListener() {
-	@Override
+    @Override
         public void onSigninSucceeded() {
             // You are now connected
             // Do something on the thread UI
@@ -409,27 +407,27 @@ private Contact.ContactListener m_contactListener= new Contact.ContactListener()
 
         @Override
         public void onActionInProgress(boolean b) {
-		// Do something on the thread UI
+        // Do something on the thread UI
 
         }
     };
 ```
 And then register to that listner .
 ```java
-	public class MyFragmentWhichIsListeningToContactUpdates implement Contact.ContactListener {
-    	private IRainbowContact my_contact;
+    public class MyFragmentWhichIsListeningToContactUpdates implement Contact.ContactListener {
+        private IRainbowContact my_contact;
     
-    	@Override
-    	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle                  savedInstanceState) {
-		my_contact.registerChangeListener(this);
-		return view;
-	}
-	@Override
-	public void onDestroyView() {
-		my_contact.unregisterChangeListener(this);
-		super.onDestroyView();
-	}
-	}
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle                  savedInstanceState) {
+        my_contact.registerChangeListener(this);
+        return view;
+    }
+    @Override
+    public void onDestroyView() {
+        my_contact.unregisterChangeListener(this);
+        super.onDestroyView();
+    }
+    }
 ```
 
 ###  Listen to contact presence change
@@ -445,19 +443,16 @@ The presence and status of a Rainbow user can take several values as described i
 
 | Presence | Status | Meaning |
 |----------------|--------------|---------|
-| **ONLINE** | **online**| The contact is connected to Rainbow through a desktop application and is available |
-| **ONLINE** | **mobile_online** | The contact is connected to Rainbow through a mobile application and is available |
-| **AWAY** | **away**| The contact is connected to Rainbow but hasn't have any activity for several minutes |
-| **DND** |**DoNotDisturb** | The contact is connected to Rainbow and doesn't want to be disturbed at this time |
-| **DND_PRESENTATION** | **presentation** | The contact is connected to Rainbow and uses an application in full screen (presentation mode) |
-| **BUSY_AUDIO** | **audio** | The contact is connected to Rainbow and currently engaged in an audio call (WebRTC) |
-| **BUSY_VIDEO** | **video** | The contact is connected to Rainbow and currently engaged in a video call (WebRTC) |
-| **DND_PRESENTATION** | **sharing** | The contact is connected to Rainbow and currently engaged in a screen sharing presentation (WebRTC) |
-| **OFFLINE** | | The contact is not connected to Rainbow |
-| **UNSUBSCRIBED** | | The presence of the Rainbow user is not known (not shared with the connected user) |
-
-Notice: With this SDK version, if the contact uses several devices at the same time, only the latest presence information is taken into account.
-
+| **`ONLINE`** | **online**| The contact is connected to Rainbow through a desktop application and is available |
+| **`ONLINE`** | **mobile_online** | The contact is connected to Rainbow through a mobile application and is available |
+| **`AWAY`** | **away**| The contact is connected to Rainbow but hasn't have any activity for several minutes |
+| **`DND`** |**DoNotDisturb** | The contact is connected to Rainbow and doesn't want to be disturbed at this time |
+| **`DND_PRESENTATION`** | **presentation** | The contact is connected to Rainbow and uses an application in full screen |
+| **`BUSY_AUDIO`** | **audio** | The contact is connected to Rainbow and currently engaged in an audio call (WebRTC) |
+| **`BUSY_VIDEO`** | **video** | The contact is connected to Rainbow and currently engaged in a video call (WebRTC) |
+| **`DND_PRESENTATION`** | **sharing** | The contact is connected to Rainbow and currently engaged in a screen sharing presentation (WebRTC) |
+| **`OFFLINE`** | | The contact is not connected to Rainbow |
+| **`UNSUBSCRIBED`** | | The presence of the Rainbow user is not known (not shared with the connected user) |
 
 ## Presence
 
@@ -478,10 +473,10 @@ The following Rainbow Presence  values  are accepted:
 
 | Presence constant | value | Meaning |
 |------------------ | ----- | ------- |
-| **ONLINE** | "online" | The connected user is seen as **available** |
-| **DND** | "dnd" | The connected user is seen as **do not disturb** |
-| **AWAY** | "away" | The connected user is seen as **away** |
-| **OFFLINE** | "invisible" | The connected user is connected but **seen as offline** |
+| **`ONLINE`** | "online" | The connected user is seen as **available** |
+| **`DND`** | "dnd" | The connected user is seen as **do not disturb** |
+| **`AWAY`** | "away" | The connected user is seen as **away** |
+| **`OFFLINE`** | "invisible" | The connected user is connected but **seen as offline** |
 
 
 Notice: Values other than the ones listed will not be taken into account.
@@ -496,19 +491,19 @@ You can do it by creating an IItemListChangeListener in the class which is liste
 
 ```java
     public class MyFragmentWhichIsListeningConversations extends Fragment {
-		private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
-			@Override
-			public void dataChanged() {
-				// Do something on the thread UI
-				ArrayItemList<IRainbowConversation> conversations = RainbowSdk.instance().
-				conversations().getAllConversations();                                          
-			}
-		}
+        private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
+            @Override
+            public void dataChanged() {
+                // Do something on the thread UI
+                ArrayItemList<IRainbowConversation> conversations = RainbowSdk.instance().
+                conversations().getAllConversations();                                          
+            }
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             RainbowSdk.instance().conversations().getAllConversations().registerChangeListener(m_changeListener);
-         	return view;
+            return view;
         }
         @Override
         public void onDestroyView() {
@@ -519,19 +514,19 @@ You can do it by creating an IItemListChangeListener in the class which is liste
 ```
 To differenciate the two types of conversation, you can use the **isRoomType** method of IRainbowConversation.
 ```java
-	for(IRainbowConversation conversation : conversations.getCopyOfDatalist()) {
-		if (conversation.isRoomType()) {
-			// The conversation is a bubble / room
-		}
-		else {
-			// The conversation is a peer to peer conversation
-		}
-	}
-	
+    for(IRainbowConversation conversation : conversations.getCopyOfDatalist()) {
+        if (conversation.isRoomType()) {
+            // The conversation is a bubble / room
+        }
+        else {
+            // The conversation is a peer to peer conversation
+        }
+    }
+    
   ``` 
   ### Send a message to a conversation 
   
-  To send a message to a conversation, you just have to call the API  `sendMessageToConversation()` with the **IRainbowConversation**. 	   The GUI is updated by the **IItemListChangeListener** above.
+  To send a message to a conversation, you just have to call the API  `sendMessageToConversation()` with the **IRainbowConversation**.     The GUI is updated by the **IItemListChangeListener** above.
   
   ```java
     RainbowSdk.instance().im().sendMessageToConversation(m_conversation, "your message text);
@@ -539,25 +534,25 @@ To differenciate the two types of conversation, you can use the **isRoomType** m
   
   ###  Listening to incoming messages
   
- Since you store the conversation you got from `getAllConversation()` method in ArrayItemList you will be able to listen to any    	conversation update which include listening for incoming messages .
+ Since you store the conversation you got from `getAllConversation()` method in ArrayItemList you will be able to listen to any     conversation update which include listening for incoming messages .
  So when a new message is received, the  **IItemListChangeListener**  detect  that and update the  conversation automatically. 
 When receiving a  message, the SDK for Android automatically send a receipt of type received to your recipient.
 folowing is a table with of recipent types 
 
 | Receipt  constant | value | Meaning |
 |------------------ | ----- | ------- |
-| **SENT** | 0 |server not received message yet(E.g .  you have no connection)|
-| **SENT_SERVER_RECEIVED** | 1 | client not connected|
-| **SENT_CLIENT_RECEIVED** | 2 | client connected, just received it|
-| **SENT_CLIENT_READ** | 3 | client read the message |
-| **RECEIVED** | 4 | When receiving a message, SDK for Android sends it automatically  |
-| **READ** | 5 |sent when client call `markMessagesFromConversationAsRead()`   |
+| **`SENT`** | 0 |server not received message yet(E.g .  you have no connection)|
+| **`SENT_SERVER_RECEIVED`** | 1 | client not connected|
+| **`SENT_CLIENT_RECEIVED`** | 2 | client connected, just received it|
+| **`SENT_CLIENT_READ`** | 3 | client read the message |
+| **`RECEIVED`** | 4 | When receiving a message, SDK for Android sends it automatically  |
+| **`READ`** | 5 |sent when client call `markMessagesFromConversationAsRead()`   |
 
 
 
   ### Marking a message as read
   
-  When receiving a message, the SDK for Android automatically send a receipt of type received to your recipient. On your own, you need to send a receipt of type read when the message received has been read.
+When receiving a message, the SDK for Android automatically send a receipt of type received to your recipient. On your own, you need to send a receipt of type read when the message received has been read.
 To send a receipt of type read, you need to call the API markMessagesFromConversationAsRead() with the IRainbowConversation as method parameter like in the following
 
 
@@ -572,15 +567,15 @@ Here is a list of the events that you can subscribe on:
 
 | Name | Description |
 |------|------------|
-| **SigninResponseListener** | Fired when you try to connect to Rainbow and do signin |
-| **IContactListener** | Fired  when contact has been updated |
-| **IRainbowInvitationManagementListener** | Fired when invitation is being accepted or declined |
-| **IRainbowSentInvitationListener** | Fired when invitation is being sent |
-| **IContactSearchListener** | Fired when you search for contact |
-| **IRainbowContactManagementListener** | Fired when you a contact is being  removed  from  roster list |
-| **IRainbowImListener** | Fired when a new message is received for a given conversation. |
-| **IRainbowConversationsListener** | fired when the list of conversations has changed. |
-| **IRainbowGetConversationListener** | Fired when the conversation is being called|
+| **`SigninResponseListener`** | Fired when you try to connect to Rainbow and do signin |
+| **`IContactListener`** | Fired  when contact has been updated |
+| **`IRainbowInvitationManagementListener`** | Fired when invitation is being accepted or declined |
+| **`IRainbowSentInvitationListener`** | Fired when invitation is being sent |
+| **`IContactSearchListener`** | Fired when you search for contact |
+| **`IRainbowContactManagementListener`** | Fired when you a contact is being  removed  from  roster list |
+| **`IRainbowImListener`** | Fired when a new message is received for a given conversation. |
+| **`IRainbowConversationsListener`** | fired when the list of conversations has changed. |
+| **`IRainbowGetConversationListener`** | Fired when the conversation is being called|
 
 
 
