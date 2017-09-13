@@ -7,15 +7,17 @@ Welcome to the Alcatel-Lucent Enterprise **Rainbow Software Development Kit for 
 
 ## Preamble
 ---
+The Alcatel-Lucent Enterprise (ALE) Rainbow Software Development Kit (SDK) is an Android library based on Java for connecting your Android native application to Rainbow.
+
 Its powerfull APIs enable you to create the best Android applications that connect to Alcatel-Lucent Enterprise [Rainbow](https://www.openrainbow.com/).
 
 This documentation will help you to use it.
 
 
-## Rainbow developper account
+## Rainbow developer account
 ---
 
-Your need a Rainbow **developer** account in order to use the Rainbow SDK for Android
+You need a Rainbow **developer** account in order to use the Rainbow SDK for Android
 
 Please contact the Rainbow [support](mailto:support@openrainbow.com) team if you need one.
 
@@ -114,7 +116,7 @@ Add the following permissions in your **AndroidManifest.xml**
 
 ### Step 2: Add an Application class
 
-**NB: If you already have a class which extends Application, you can skip this step.**  
+**NB:**  If you already have a class which extends Application, you can skip this step. 
 
 Create a java class in your project which extends Application (for example MyApp.java).  
 Go to **AndroidManifest.xml** and add the reference:
@@ -178,10 +180,11 @@ However, when you are developping, you may want to connect on the Developer Sand
 That's all! Your Android application is ready for connecting to Rainbow!
 
 
-## Connect to Rainbow
+
+## Connecting to Rainbow
 ---------
 
-In order to connect to Rainbow you You need to have a valid Rainbow account , simply click [here](https://www.openrainbow.com/)if you dont have one .
+In order to connect to Rainbow you You need to have a valid Rainbow account , simply click [here](https://www.openrainbow.com/) if you don't have one .
 
 After getting a valid account you have to start the rainbow service first then signin , if you want to connect to the official Rainbow environment use the following `signin` method
 
@@ -210,7 +213,7 @@ RainbowSdk.instance().connection().start(new StartResponseListener() {
 
 ```
 
-if you have another host you want to connect on (example: "sandbox.openrainbow.com") use this `signin` method
+**But** if you have another host you want to connect on (example: "sandbox.openrainbow.com") use this `signin` method
 
 ```java
 RainbowSdk.instance().connection().signin("@email", "password", "host", new SigninResponseListener() {
@@ -230,7 +233,6 @@ That's all! Your application should be connected to Rainbow, congratulation!
 
 ## Contacts
 ---
-Once connected to rainbow , you Will be able to manage your contacts 
 
 ###  Retrieve the list of contacts
 
@@ -283,7 +285,7 @@ Once connected to rainbow , you Will be able to manage your contacts
 ###  Retrieve a contact information
 ---
 
-Accessing individually an existing contact can be done using the API `getContactFromJabberId()`, `getContactFromCorporateId()`
+Accessing individually an existing contact can be done using the API `getContactFromJabberId()` or `getContactFromCorporateId()`
 
 ```java
 
@@ -506,6 +508,7 @@ In the following table , you can find a several values for user presence :
 | **`UNSUBSCRIBED`** | | The presence of the Rainbow user is not known (not shared with the connected user) |
 
 Notice: Values other than the ones listed will not be taken into account.
+
 
 
 ## Instant Messaging 
