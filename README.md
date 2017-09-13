@@ -230,9 +230,9 @@ That's all! Your application should be connected to Rainbow, congratulation!
 
 ## Contacts
 ---
-Once connected to rainbow , you can manage your conatct,
+Once connected to rainbow , you Will be able to manage your contacts 
 
-### 1) Retrieve the list of contacts
+###  Retrieve the list of contacts
 
  Rainbow Android  SDK allow you to retrieve the list of contacts from the server. the returned list represents your Roster onec (**Contact who already have their rainbow account and you accept them as friends** ).
  You can access to them by using the following API:
@@ -280,7 +280,7 @@ Once connected to rainbow , you can manage your conatct,
  ```
 
 
-### 2) Retrieve a contact information
+###  Retrieve a contact information
 ---
 
 Accessing individually an existing contact can be done using the API `getContactFromJabberId()`, `getContactFromCorporateId()`
@@ -295,7 +295,7 @@ Accessing individually an existing contact can be done using the API `getContact
 
 Regarding the method `getUserDataFromId()`, if the contact is not found in the list of contacts, a request is sent to the server to retrieve it (limited set of information depending privacy rules).
 
-### 3) Searching for a contact by name .
+###  Searching for a contact by name .
 ---
 
 If you want to search for a Rainbow contacts **who already have their  Rainbow account** inorder to add them to your network , use this API 
@@ -337,7 +337,7 @@ RainbowSdk.instance().contacts().searchByName(String name, final IContactSearchL
     
   ```
   
-### 4) Add a contact to a Roster list .
+###  Add a contact to a Roster list .
 ---
 
 In order to invite a contact to your Rainbow network you  can use this API .
@@ -371,7 +371,7 @@ you need to register to **IRainbowSentInvitationListener** to manage the callbac
     };
 ```
 
-##### 2) Remove a contact From contacts list
+###  Remove a contact From contacts list
 ---
 
 To remove a contact from your network , it is the  same mecanism: use this API 
@@ -409,13 +409,16 @@ And don't fogret to craete  **IRainbowContactManagementListener** as follows :
 The Rainbow SDK for Android allows to change the presence of the connected user with list of potential choices  .But first lets get the connected user by calling the following api:
 
 ```java
+
 RainbowSDK.instance().myProfile().getConnectedUser();
 
 ```
 To set Presence manually call this API
 
-``` JAVA 
+```java 
+
 RainbowSDK.instance().myProfile().setPresenceTo(RainbowPresence presence);
+
 ```
 The following Rainbow Presence  values  are accepted:
 
