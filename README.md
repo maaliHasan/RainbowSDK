@@ -179,13 +179,11 @@ That's all! Your Android application is ready for connecting to Rainbow!
 
 
 ## Connect to Rainbow
-
 ---------
 
-You need to have a valid Rainbow account to do that.To connect to Rainbow, you have to:
+In order to connect to Rainbow you You need to have a valid Rainbow account , simply click [here](https://www.openrainbow.com/)if you dont have one .
 
-* start the rainbow service
-* and then use the sign in method when the service is ready.
+After getting a valid account you have to start the rainbow service first then signin , if you want to connect to the official Rainbow environment use the following `signin` method
 
 ```java
 
@@ -211,7 +209,8 @@ RainbowSdk.instance().connection().start(new StartResponseListener() {
 });
 
 ```
-You can also call the *signin* method with the host you want to connect on (example: "sandbox.openrainbow.com"): 
+
+if you have another host you want to connect on (example: "sandbox.openrainbow.com") use this `signin` method
 
 ```java
 RainbowSdk.instance().connection().signin("@email", "password", "host", new SigninResponseListener() {
@@ -225,27 +224,29 @@ RainbowSdk.instance().connection().signin("@email", "password", "host", new Sign
             // Do something on the thread UI
         }
  ```
-**Note**: Do not forget to start the service before.  
-**Note**: If you don't fill the host, the last will be used. If it is the first time (you don't have a last), the default value is the production server ("openrainbow.com").
+
 That's all! Your application should be connected to Rainbow, congratulation!
 
 
 ## Contacts
 ---
+Once connected to rainbow , you can manage your conatct,
 
-You can take a look to [contact files ](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/tree/master/src/main/java/com/ale/infra/contact) provided in SDK src files  to find all what you need to know about Rainbow Contact object .E.g: contact name , Ids , email address ,  phone numbers and more
+### 1) Retrieve the list of contacts
 
-### Retrieve the list of contacts
+ Rainbow Android  SDK allow you to retrieve the list of contacts from the server. the returned list represents your Roster onec (**Contact who already have their rainbow account and you accept them as friends** ).
+ You can access to them by using the following API:
 
- Rainbow Android  SDK allow you to retrieve the list of contacts from the server. the returned list represent youy Roster onec (**Contact who already have their rainbow account and you accept them as friends** ).  You can access to them by using the following API:
 
 ```java
   RainbowSdk.instance().contacts().getRainbowContacts()
 ```
- **But**  you have to listen to the contacts list changes. See more in [ArrayItemList](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/blob/master/docs/tutorials/ArrayItemList.md) You can do it by creating an IItemListChangeListener in the class which is listening and then register as follows .
+
+ **But**  you have to listen to the contacts list changes. See more in [ArrayItemList](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/blob/master/docs/tutorials/ArrayItemList.md) , You can do that by creating an IItemListChangeListener in the class which is listening and then register as follows .
+ 
  ```java
  public class ContactsFragment extends Fragment {
-    public static final String TAG = ContactsFragment.class.getSimpleName();
+      
     private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
         @Override
         public void dataChanged() {
@@ -277,10 +278,10 @@ You can take a look to [contact files ](https://github.com/Rainbow-CPaaS/Rainbow
 
 }
  ```
-Note: This is the fixed list of contacts of the connected user.
 
 
-### Retrieve a contact information
+### 2) Retrieve a contact information
+---
 
 Accessing individually an existing contact can be done using the API `getContactFromJabberId()`, `getContactFromCorporateId()`
 
@@ -294,7 +295,9 @@ Accessing individually an existing contact can be done using the API `getContact
 
 Regarding the method `getUserDataFromId()`, if the contact is not found in the list of contacts, a request is sent to the server to retrieve it (limited set of information depending privacy rules).
 
-### Searching for a contact by name .
+### 3) Searching for a contact by name .
+---
+
 If you want to search for a Rainbow contacts **who already have their  Rainbow account** inorder to add them to your network , use this API 
 ```java
 RainbowSdk.instance().contacts().searchByName(String name, final IContactSearchListener listener);
@@ -302,12 +305,10 @@ RainbowSdk.instance().contacts().searchByName(String name, final IContactSearchL
  then You have to create **IContactSearchListener**  in the class which is listening and then register as follows .
  ```java
    public class MyFragment extends Fragment  {
-    public static final String TAG = MyFragment.class.getSimpleName();
         private IContactSearchListener m_searchListener = new IContactSearchListener() {
 
         @Override
         public void searchStarted() {
-        Log.d(TAG, "searchStarted: ");
         }
 
         @Override
@@ -324,8 +325,6 @@ RainbowSdk.instance().contacts().searchByName(String name, final IContactSearchL
 
         @Override
         public void searchError() {
-        Log.d(TAG, "searchError: ");
-
         }
     };
     
@@ -335,14 +334,20 @@ RainbowSdk.instance().contacts().searchByName(String name, final IContactSearchL
          RainbowSdk.instance().contacts().searchByName('Name', m_searchListener);
         }
     }
+    
   ```
-### Add a contact to a Roster list .
+  
+### 4) Add a contact to a Roster list .
+---
+
 In order to invite a contact to your Rainbow network you  can use this API .
 
 ```java
  RainbowSdk.instance().contacts().addRainbowContactToRoster(final String contactCorporateId, final String contactEmail, final IRainbowSentInvitationListener listener);
 ``` 
+
 you need to register to **IRainbowSentInvitationListener** to manage the callbacks after you send the invitaion .For example, prevent adding  contact who is already in your roster list ,if the invitation has already been sent in the last 3600 seconds, or invitation success ,...etc . 
+
 ```java
  private IRainbowSentInvitationListener addContactListener = new IRainbowSentInvitationListener() {
         @Override
@@ -366,12 +371,17 @@ you need to register to **IRainbowSentInvitationListener** to manage the callbac
     };
 ```
 
-### Remove a contact From contacts list
-To remove a contact from your network , it is the  same mecanism: use this api 
+##### 2) Remove a contact From contacts list
+---
+
+To remove a contact from your network , it is the  same mecanism: use this API 
+
 ```java
  RainbowSdk.instance().contacts().removeContactFromRoster(String contactJid, String contactEmail, IRainbowContactManagementListener listener);
 ```
-and don't fogret to craete  **IRainbowContactManagementListener** as follows :
+
+And don't fogret to craete  **IRainbowContactManagementListener** as follows :
+
 ```java
  private IRainbowContactManagementListener mRemoveContactListener = new IRainbowContactManagementListener() {
         @Override
@@ -387,13 +397,44 @@ and don't fogret to craete  **IRainbowContactManagementListener** as follows :
         }
     };
 ```
+
 **Note**: be carful about the  contact id used , in **removeContactFromRoster** use Contact **jabber Id** which you can get it using `getContactId()` Rainbow method . However , in **AddRainbowContactToRoster** use contact **Corporate Id** using   `getCorporateId()` method
 
+
+## Presence
+---
+
+### Change presence manually
+
+The Rainbow SDK for Android allows to change the presence of the connected user with list of potential choices  .But first lets get the connected user by calling the following api:
+
+```java
+RainbowSDK.instance().myProfile().getConnectedUser();
+
+```
+To set Presence manually call this API
+
+``` JAVA 
+RainbowSDK.instance().myProfile().setPresenceTo(RainbowPresence presence);
+```
+The following Rainbow Presence  values  are accepted:
+
+
+| Presence constant | value | Meaning |
+|------------------ | ----- | ------- |
+| **`ONLINE`** | online | The connected user is seen as **available** |
+| **`DND`** | dnd | The connected user is seen as **do not disturb** |
+| **`AWAY`** | away | The connected user is seen as **away** |
+| **`OFFLINE`** | invisible | The connected user is connected but **seen as offline** |
+
+
 ###  Managing contacts updates.
-You need to detect when the data of a contact are modified,or when a property of an object in the list are changed .So you have to listen to contact updates by creating a **ContactListener**  as follows .
+---
+
+You need to detect when the data of a contact are modified, or when a property of an object in the list are changed .So you have to listen to contact updates by creating a **ContactListener**  as follows .
+
 ```java
 private Contact.ContactListener m_contactListener= new Contact.ContactListener(){
-
         @Override
         public void contactUpdated(Contact contact) {
          //here you can detect the updated contact , Do something on the thread UI
@@ -412,72 +453,54 @@ private Contact.ContactListener m_contactListener= new Contact.ContactListener()
         }
     };
 ```
+
 And then register to that listner .
+
 ```java
     public class MyFragmentWhichIsListeningToContactUpdates implement Contact.ContactListener {
         private IRainbowContact my_contact;
     
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle                  savedInstanceState) {
-        my_contact.registerChangeListener(this);
-        return view;
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+             my_contact.registerChangeListener(this);
+             return view;
+         }
+         @Override
+         public void onDestroyView() {
+              my_contact.unregisterChangeListener(this);
+             super.onDestroyView();
+         }
     }
-    @Override
-    public void onDestroyView() {
-        my_contact.unregisterChangeListener(this);
-        super.onDestroyView();
-    }
-    }
+    
 ```
 
 ###  Listen to contact presence change
- contact presence is  one of the contact property which you can listen to it when its change as mentioned in **Managing contacts updates** , When the presence of a contact changes, the following event is fired:
+---
+
+ Contact presence is  one of the contact property which you can listen to it when its change as mentioned in **Managing contacts updates** . When the presence of a contact changes, the following event is fired:
+ 
 ```java
 ...
- public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
-          // here you can Listen to contact presence change
-        }
+public void onPresenceChanged(Contact contact, RainbowPresence rainbowPresence) {
+        // here you can Listen to contact presence change
+    }
+ 
 ```
 
-The presence and status of a Rainbow user can take several values as described in the following table:
+In the following table , you can find a several values for user presence :
 
 | Presence | Status | Meaning |
 |----------------|--------------|---------|
-| **`ONLINE`** | **online**| The contact is connected to Rainbow through a desktop application and is available |
-| **`ONLINE`** | **mobile_online** | The contact is connected to Rainbow through a mobile application and is available |
-| **`AWAY`** | **away**| The contact is connected to Rainbow but hasn't have any activity for several minutes |
-| **`DND`** |**DoNotDisturb** | The contact is connected to Rainbow and doesn't want to be disturbed at this time |
-| **`DND_PRESENTATION`** | **presentation** | The contact is connected to Rainbow and uses an application in full screen |
-| **`BUSY_AUDIO`** | **audio** | The contact is connected to Rainbow and currently engaged in an audio call (WebRTC) |
-| **`BUSY_VIDEO`** | **video** | The contact is connected to Rainbow and currently engaged in a video call (WebRTC) |
-| **`DND_PRESENTATION`** | **sharing** | The contact is connected to Rainbow and currently engaged in a screen sharing presentation (WebRTC) |
+| **`ONLINE`** | online| The contact is connected to Rainbow through a desktop application and is available |
+| **`ONLINE`** | mobile_online | The contact is connected to Rainbow through a mobile application and is available |
+| **`AWAY`** | away| The contact is connected to Rainbow but hasn't have any activity for several minutes |
+| **`DND`** |DoNotDisturb| The contact is connected to Rainbow and doesn't want to be disturbed at this time |
+| **`DND_PRESENTATION`** | presentation | The contact is connected to Rainbow and uses an application in full screen |
+| **`BUSY_AUDIO`** | audio | The contact is connected to Rainbow and currently engaged in an audio call (WebRTC) |
+| **`BUSY_VIDEO`** | video | The contact is connected to Rainbow and currently engaged in a video call (WebRTC) |
+| **`DND_PRESENTATION`** | sharing |The contact is connected to Rainbow and currently engaged in a screen sharing presentation(WebRTC) |
 | **`OFFLINE`** | | The contact is not connected to Rainbow |
 | **`UNSUBSCRIBED`** | | The presence of the Rainbow user is not known (not shared with the connected user) |
-
-## Presence
-
-### Change presence manually
-
-The Rainbow SDK for Android allows to change the presence of the connected user with list of potential choices  .But first lets get the connected user by calling the following api:
-
-```java
-RainbowSDK.instance().myProfile().getConnectedUser();
-
-```
-To set Presence manually call this API
-``` JAVA 
-RainbowSDK.instance().myProfile().setPresenceTo(RainbowPresence presence);
-```
-The following Rainbow Presence  values  are accepted:
-
-
-| Presence constant | value | Meaning |
-|------------------ | ----- | ------- |
-| **`ONLINE`** | "online" | The connected user is seen as **available** |
-| **`DND`** | "dnd" | The connected user is seen as **do not disturb** |
-| **`AWAY`** | "away" | The connected user is seen as **away** |
-| **`OFFLINE`** | "invisible" | The connected user is connected but **seen as offline** |
-
 
 Notice: Values other than the ones listed will not be taken into account.
 
@@ -486,17 +509,17 @@ Notice: Values other than the ones listed will not be taken into account.
 ---------
 ### Retrieve conversations
 
-To retrieve all active conversations (peer to peer conversations and bubles, you can call the method getAllConversations() but you have to **listen to the conversations list changes**. See more in **[ArrayItemList.md](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/blob/master/docs/tutorials/ArrayItemList.md)**.  
+To retrieve all active conversations (peer to peer conversations and bubles), you can call the method getAllConversations() but you have to **listen to the conversations list changes**.
+See more in **[ArrayItemList.md](https://github.com/Rainbow-CPaaS/Rainbow-Android-SDK/blob/master/docs/tutorials/ArrayItemList.md)**.  
 You can do it by creating an IItemListChangeListener in the class which is listening and then register.
 
 ```java
-    public class MyFragmentWhichIsListeningConversations extends Fragment {
+   public class MyFragmentWhichIsListeningConversations extends Fragment {
         private IItemListChangeListener m_changeListener = new IItemListChangeListener() {
             @Override
             public void dataChanged() {
                 // Do something on the thread UI
-                ArrayItemList<IRainbowConversation> conversations = RainbowSdk.instance().
-                conversations().getAllConversations();                                          
+                ArrayItemList<IRainbowConversation> conversations = RainbowSdk.instance().conversations().getAllConversations();
             }
         }
 
@@ -505,14 +528,18 @@ You can do it by creating an IItemListChangeListener in the class which is liste
             RainbowSdk.instance().conversations().getAllConversations().registerChangeListener(m_changeListener);
             return view;
         }
+
         @Override
         public void onDestroyView() {
             RainbowSdk.instance().conversations().getAllConversations().unregisterChangeListener(m_changeListener);
             super.onDestroyView();
         }
     }
+    
 ```
+
 To differenciate the two types of conversation, you can use the **isRoomType** method of IRainbowConversation.
+
 ```java
     for(IRainbowConversation conversation : conversations.getCopyOfDatalist()) {
         if (conversation.isRoomType()) {
@@ -524,6 +551,7 @@ To differenciate the two types of conversation, you can use the **isRoomType** m
     }
     
   ``` 
+  
   ### Send a message to a conversation 
   
   To send a message to a conversation, you just have to call the API  `sendMessageToConversation()` with the **IRainbowConversation**.     The GUI is updated by the **IItemListChangeListener** above.
@@ -534,8 +562,8 @@ To differenciate the two types of conversation, you can use the **isRoomType** m
   
   ###  Listening to incoming messages
   
- Since you store the conversation you got from `getAllConversation()` method in ArrayItemList you will be able to listen to any     conversation update which include listening for incoming messages .
- So when a new message is received, the  **IItemListChangeListener**  detect  that and update the  conversation automatically. 
+ Since you store the conversation you got from `getAllConversation()` method in ArrayItemList you will be able to listen to any       conversation update which include listening for incoming messages .
+ So when a new message is received, the  **IItemListChangeListener**  detect that and update the conversation automatically. 
 When receiving a  message, the SDK for Android automatically send a receipt of type received to your recipient.
 folowing is a table with of recipent types 
 
@@ -552,18 +580,18 @@ folowing is a table with of recipent types
 
   ### Marking a message as read
   
-When receiving a message, the SDK for Android automatically send a receipt of type received to your recipient. On your own, you need to send a receipt of type read when the message received has been read.
-To send a receipt of type read, you need to call the API markMessagesFromConversationAsRead() with the IRainbowConversation as method parameter like in the following
-
+To manually mark a message as read , you need to send a receipt of type read when the message received has been read.
+this is can done by  calling  the API `markMessagesFromConversationAsRead()` with the IRainbowConversation as method parameter
 
  ```java
 ainbowSdk.instance().im().markMessagesFromConversationAsRead(m_conversation);
+
  ```
+ 
 
 ### List of events
 ---
-Here is a list of the events that you can subscribe on:
-
+Here is the list of list of the events that you can subscribe on  supported  by the Rainbow-Android-SDK
 
 | Name | Description |
 |------|------------|
