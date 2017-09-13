@@ -19,12 +19,14 @@ Your need a Rainbow **developer** account in order to use the Rainbow SDK for An
 
 Please contact the Rainbow [support](mailto:support@openrainbow.com) team if you need one.
 
-# Configuration
----------
 ## Set up the project
+---------
+
 ### Step 1 : Set minimal version of Android SDK
+
 RainbowSDK is using the Android SDK **version 16** so you must set it to the minimal in your app.  
 With gradle:
+
 ```java
 android {
 	[...]
@@ -34,8 +36,10 @@ android {
 	}
 }
 ```
+
 ### Step 2 : Add the gradle dependency to the Rainbow SDK for Android
 In your **app\build.gradle**, add these lines:
+
 ```java
 	allprojects {
 	    repositories {
@@ -60,22 +64,29 @@ And **Sync Now**.
 ---------
 
 
-#### Step 1 : Add the following permissions in your **AndroidManifest.xml**
+#### Step 1 : Configure permissions
+Add the following permissions in your **AndroidManifest.xml**
+
 ```java
+
 <uses-permission android:name="android.permission.READ_PROFILE" />
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.READ_CONTACTS"/>
-<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-<uses-permission android:name="android.permission.WAKE_LOCK"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.READ_CONTACTS" />
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
 ```
+
 ### Step 2: Add an Application class
 
 **NB: If you already have a class which extends Application, you can skip this step.**  
+
 Create a java class in your project which extends Application (for example MyApp.java).  
 Go to **AndroidManifest.xml** and add the reference:
+
 ```java
     <application
         android:name=".MyApp"
@@ -85,7 +96,14 @@ Go to **AndroidManifest.xml** and add the reference:
 
 ### Step 3 : Initialize the Rainbow SDK in your project
 
-In the **onCreate()** of your application, you have to set a notificationBuilder with different parameters and call the initialize method.
+In the **onCreate()** of your application, you have to set a notificationBuilder with different parameters and call the initialize method. there are two possible cases for that .
+
+##### 1) connecting to the official Rainbow environment
+
+The initializing method needs two parameters: the **application ID** and the **secret key** of your application.
+
+These information allow to identify the application you are developping. For more information, see [Injecting key and secret](https://api.openrainbow.org/sdk/web/tutorial-10-Injecting%20key%20and%20secret.html) which explains what is the purpose, how to create an application and how to get the application ID and the secret key. 
+
 
 
 ```java
@@ -94,10 +112,33 @@ In the **onCreate()** of your application, you have to set a notificationBuilder
 	 super.onCreate();
 	RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),YourActivity.class,the_icon_app_id,getString(R.string.app_name),"Connect to the app",Color.RED);
 	
-	RainbowSdk.instance().initialize(); // Will change in the future
+	RainbowSdk.instance().initialize("applicationId", "secretKey"); 
 }
 
 ```
+
+##### 2) You want to connect on the Developer Sandboxed Platform
+
+However, when you are developping, you may want to connect on the Developer Sandboxed Platform. In that case, you don't need to provide an application ID and the secret key. Just call the initializing method with no parameter as following:
+
+
+```java
+@Override
+    public void onCreate() {
+        super.onCreate();
+        RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),
+              					     YourActivity.class,
+               					     the_icon_app_id, // You can set it to 0 if you have no app icon
+            					     getString(R.string.app_name),
+              					    "Connect to the app",
+              					    Color.RED);
+        RainbowSdk.instance().initialize();   
+    }
+   
+
+```
+
+That's all! Your Android application is ready for connecting to Rainbow!
 
 
 ## Usage
