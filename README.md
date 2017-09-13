@@ -19,6 +19,38 @@ Your need a Rainbow **developer** account in order to use the Rainbow SDK for An
 
 Please contact the Rainbow [support](mailto:support@openrainbow.com) team if you need one.
 
+
+### Prerequisites
+---
+
+#### Android
+---
+
+The Rainbow SDK for Android supports older versions of Android up to Android Jellybean.
+
+The minimal version supported are:
+
+| Pre-requisites | Version supported | API Level |
+|:-------------- |---------------- | ----------- |
+| Android | >= 4.1 | 16 |
+
+
+#### Android Studio
+---
+
+A stable version of Android Studio is needed to develop with the Rainbow SDK for Android.
+
+The following OS are supported:
+
+| Operating System | Version supported |
+| ---------------- | ----------------- |
+| Windows | Starting Windows 7 |
+| MacOS | Starting OS X 10.11 |
+
+
+
+
+
 ## Set up the project
 ---------
 
@@ -96,7 +128,7 @@ Go to **AndroidManifest.xml** and add the reference:
 
 ### Step 3 : Initialize the Rainbow SDK in your project
 
-In the **onCreate()** of your application, you have to set a notificationBuilder with different parameters and call the initialize method. there are two possible cases for that .
+In the **onCreate()** of your application, you have to set a notificationBuilder with different parameters and call the initialize method.There are two possible cases for that .
 
 ##### 1) connecting to the official Rainbow environment
 
@@ -110,9 +142,14 @@ These information allow to identify the application you are developping. For mor
  @Override
  public void onCreate() {
 	 super.onCreate();
-	RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),YourActivity.class,the_icon_app_id,getString(R.string.app_name),"Connect to the app",Color.RED);
+	RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),
+						     YourActivity.class,
+						     the_icon_app_id,         // You can set it to 0 if you have no app icon
+						     getString(R.string.app_name),
+						    "Connect to the app",
+						    Color.RED);
 	
-	RainbowSdk.instance().initialize("applicationId", "secretKey"); 
+       RainbowSdk.instance().initialize("applicationId", "secretKey"); 
 }
 
 ```
@@ -128,7 +165,7 @@ However, when you are developping, you may want to connect on the Developer Sand
         super.onCreate();
         RainbowSdk.instance().setNotificationBuilder(getApplicationContext(),
               					     YourActivity.class,
-               					     the_icon_app_id, // You can set it to 0 if you have no app icon
+               					     the_icon_app_id,      // You can set it to 0 if you have no app icon
             					     getString(R.string.app_name),
               					    "Connect to the app",
               					    Color.RED);
