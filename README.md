@@ -184,7 +184,7 @@ That's all! Your Android application is ready for connecting to Rainbow!
 ## Connecting to Rainbow
 ---------
 
-In order to connect to Rainbow you You need to have a valid Rainbow account , simply click [here](https://www.openrainbow.com/) if you don't have one .
+In order to connect to Rainbow you  need to have a valid Rainbow account , simply click [here](https://www.openrainbow.com/) if you don't have one .
 
 After getting a valid account you have to start the rainbow service first then signin , if you want to connect to the official Rainbow environment use the following `signin` method
 
@@ -382,7 +382,7 @@ To remove a contact from your network , it is the  same mecanism: use this API
  RainbowSdk.instance().contacts().removeContactFromRoster(String contactJid, String contactEmail, IRainbowContactManagementListener listener);
 ```
 
-And don't fogret to craete  **IRainbowContactManagementListener** as follows :
+And don't fogret to create  **IRainbowContactManagementListener** as follows :
 
 ```java
  private IRainbowContactManagementListener mRemoveContactListener = new IRainbowContactManagementListener() {
@@ -400,7 +400,7 @@ And don't fogret to craete  **IRainbowContactManagementListener** as follows :
     };
 ```
 
-**Note**: be carful about the  contact id used , in **removeContactFromRoster** use Contact **jabber Id** which you can get it using `getContactId()` Rainbow method . However , in **AddRainbowContactToRoster** use contact **Corporate Id** using   `getCorporateId()` method
+**Note**: be careful about the  contact id used , in **removeContactFromRoster** use Contact **jabber Id** which you can get it using `getContactId()` Rainbow method . However , in **AddRainbowContactToRoster** use contact **Corporate Id** using   `getCorporateId()` method
 
 
 ## Presence
@@ -459,7 +459,7 @@ private Contact.ContactListener m_contactListener= new Contact.ContactListener()
     };
 ```
 
-And then register to that listner .
+And then register to that listener .
 
 ```java
     public class MyFragmentWhichIsListeningToContactUpdates implement Contact.ContactListener {
