@@ -66,22 +66,6 @@
             android:gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
-            <RadioButton android:id="@+id/radio_official"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/official"
-                android:textStyle="italic"
-                android:textSize="16sp"
-                android:buttonTint="@color/white"
-                />
-            <RadioButton android:id="@+id/radio_sandbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sandbox"
-                android:buttonTint="@color/white"
-                android:textStyle="italic"
-                android:textSize="16sp"
-                />
         </RadioGroup>
         <Button
             android:id="@+id/btn_enter"

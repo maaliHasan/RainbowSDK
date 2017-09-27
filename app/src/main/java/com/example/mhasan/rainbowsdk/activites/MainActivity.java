@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onSignoutSucceeded() {
             Intent signOutIntent = new Intent(getBaseContext(), HomeActivity.class);
+            signOutIntent.putExtra("logout", true);
             startActivity(signOutIntent);
         }
 
